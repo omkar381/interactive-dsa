@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Structures | Classroom Whiteboard</title>
+  <!-- Handwritten style fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Shadows+Into+Light&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Sketchy Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-bracket">{</span>
+          <div class="logo-content">
+            <span class="logo-text">Data Structures</span>
+            <span class="logo-sub">~ classroom notes ~</span>
+          </div>
+          <span class="logo-bracket">}</span>
+        </div>
+        <span class="header-divider">|</span>
+        <div class="guide-info">
+          <span class="guide-label">Guided by</span>
+          <span class="guide-name">Dr. Pooja Aspalli Ma'am</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Left Panel: Team Members / Topic Selector -->
+      <aside class="panel members-panel">
+        <div class="panel-title">
+          <span class="pencil-icon">✏️</span>
+          <h2>Select Topic</h2>
+        </div>
+        
+        <div class="members-list" id="members-list">
+          <button class="member-btn" data-member="nagaraj">
+            <div class="member-info">
+              <span class="member-name">Nagaraj</span>
+              <span class="member-usn">3PD24CS121</span>
+            </div>
+            <span class="member-topic">Memory Management</span>
+          </button>
+          <button class="member-btn active" data-member="omkar">
+            <div class="member-info">
+              <span class="member-name">Omkar</span>
+              <span class="member-usn">3PD24CS131</span>
+            </div>
+            <span class="member-topic">Stack & Queue</span>
+          </button>
+          <button class="member-btn" data-member="prajwal">
+            <div class="member-info">
+              <span class="member-name">Prajwal</span>
+              <span class="member-usn">3PD24CS140</span>
+            </div>
+            <span class="member-topic">Linked List</span>
+          </button>
+        </div>
+
+        <!-- Definition Section -->
+        <div class="definition-section">
+          <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <h3>Definition</h3>
+          </div>
+          <div class="definition-card">
+            <h4 id="left-definition-title" class="definition-title">What is a Stack?</h4>
+            <p id="left-definition-text" class="definition-text">
+              A Stack is a linear data structure that follows the 
+              LIFO (Last In, First Out) principle.
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center: Whiteboard Canvas -->
+      <section class="whiteboard-area">
+        <div class="whiteboard-container">
+          <div class="whiteboard-frame">
+          <div class="whiteboard-header">
+            <span class="topic-label" id="topic-label">Stack & Queue</span>
+            <span class="chalk-mark">●●●</span>
+          </div>
+          
+          <!-- Main Visualization Canvas -->
+          <div class="whiteboard" id="visualization">
+            <!-- Dynamic sketch content -->
+          </div>
+
+          <!-- Floating Controls Panel -->
+          <div class="floating-controls">
+            <div class="floating-controls-header">
+              <span class="controls-icon">🎛️</span>
+              <h3>Controls</h3>
+            </div>
+            <div class="control-content" id="control-content">
+              <!-- Dynamic controls -->
+            </div>
+          </div>
+
+          <!-- Status chalk marks -->
+          <div class="status-chalk">
+            <span class="status-item">
+              <span class="status-label">Size:</span>
+              <span class="status-value" id="status-size">0</span>
+            </span>
+            <span class="status-divider">|</span>
+            <span class="status-item">
+              <span class="status-label">Capacity:</span>
+              <span class="status-value" id="status-capacity">8</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+        <!-- Hidden toast for JS compatibility -->
+        <span id="explanation-toast" style="display:none;"></span>
+        <span id="toast-text" style="display:none;"></span>
+      </section>
+
+      <!-- Right Panel: Process Info -->
+      <aside class="panel process-panel">
+        <!-- Hidden elements for JS compatibility -->
+        <span id="definition-title" style="display:none;"></span>
+        <span id="definition-text" style="display:none;"></span>
+        <span id="concept-title" style="display:none;"></span>
+        <span id="step-counter" style="display:none;"></span>
+        <div id="narration-content" style="display:none;"></div>
+        <button id="prev-step" style="display:none;"></button>
+        <button id="next-step" style="display:none;"></button>
+
+        <!-- Process Header -->
+        <div class="process-title">
+          <span class="process-icon">💻</span>
+          <h2>Behind the Scenes</h2>
+        </div>
+
+        <!-- Algorithm Section -->
+        <div class="algo-section">
+          <div class="algo-header">
+            <span class="algo-tag">ALGORITHM</span>
+          </div>
+          <pre class="algo-code" id="pseudocode"><code>function push(element):
+    if top >= MAX_SIZE - 1:
+        return "OVERFLOW"
+    top = top + 1
+    stack[top] = element</code></pre>
+        </div>
+
+        <!-- Live Stats -->
+        <div class="stats-section">
+          <div class="stats-header">
+            <span class="stats-tag">LIVE STATUS</span>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-icon">📍</span>
+              <div class="stat-info">
+                <span class="stat-label">Top Index</span>
+                <span class="stat-value" id="mem-top">-1</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon">📦</span>
+              <div class="stat-info">
+                <span class="stat-label">Elements</span>
+                <span class="stat-value" id="mem-size">0</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon">⚡</span>
+              <div class="stat-info">
+                <span class="stat-label">Complexity</span>
+                <span class="stat-value">O(1)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Concepts -->
+        <div class="concepts-section">
+          <div class="concepts-header">
+            <span class="concepts-tag">KEY CONCEPTS</span>
+          </div>
+          <ul class="concepts-list" id="key-points">
+            <li><span class="concept-dot"></span>LIFO: Last In, First Out</li>
+            <li><span class="concept-dot"></span>All operations at TOP only</li>
+            <li><span class="concept-dot"></span>O(1) time complexity</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
