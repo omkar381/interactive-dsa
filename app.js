@@ -191,7 +191,23 @@ function initDOM() {
     
     // Memory display
     memTop: document.getElementById('mem-top'),
-    memSize: document.getElementById('mem-size')
+    memSize: document.getElementById('mem-size'),
+    
+    // Mobile elements
+    mobileNav: document.getElementById('mobile-nav'),
+    mobileNavBtns: document.querySelectorAll('.mobile-nav-btn[data-member]'),
+    infoBtn: document.getElementById('info-btn'),
+    mobileSheet: document.getElementById('mobile-sheet'),
+    mobileOverlay: document.getElementById('mobile-overlay'),
+    sheetAlgo: document.getElementById('sheet-algo'),
+    sheetTop: document.getElementById('sheet-top'),
+    sheetSize: document.getElementById('sheet-size'),
+    sheetTitle: document.getElementById('sheet-title'),
+    
+    // PWA
+    pwaPrompt: document.getElementById('pwa-prompt'),
+    pwaInstall: document.getElementById('pwa-install'),
+    pwaLater: document.getElementById('pwa-later')
   };
 }
 
@@ -1147,13 +1163,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize DOM references
   initDOM();
   
-  // Set up member button click handlers
+  // Set up member button click handlers (desktop)
   if (DOM.memberBtns && DOM.memberBtns.length > 0) {
     DOM.memberBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         switchMember(btn.dataset.member);
       });
     });
+  }
+  
+  // Set up mobile navigation click handlers
+  if (DOM.mobileNavBtns && DOM.mobileNavBtns.length > 0) {
+    DOM.mobileNavBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const member = btn.dataset.member;
+        switchMember(member);
+        
+        // Update mobile nav active state
+        DOM.mobileNavBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Close sheet if open
+        closeMobileSheet();
+      });
+    });
+  }
+  
+  // Info button for mobile sheet
+  if (DOM.infoBtn) {
+    DOM.infoBtn.addEventListener('click', toggleMobileSheet);
+  }
+  
+  // Close sheet on overlay click
+  if (DOM.mobileOverlay) {
+    DOM.mobileOverlay.addEventListener('click', closeMobileSheet);
   }
   
   // Step navigation (if elements exist)
@@ -1175,6 +1218,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // PWA Install prompt handlers
+  setupPWA();
+  
   // Start with Omkar's Stack & Queue view
   switchMember('omkar');
   
@@ -1183,3 +1229,161 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Team: Nagaraj, Omkar, Prajwal');
   console.log('Guide: Dr. Pooja Aspalli Ma\'am');
 });
+
+// ============================================
+// MOBILE FUNCTIONS
+// ============================================
+
+function toggleMobileSheet() {
+  if (DOM.mobileSheet && DOM.mobileOverlay) {
+    const isOpen = DOM.mobileSheet.classList.contains('open');
+    if (isOpen) {
+      closeMobileSheet();
+    } else {
+      openMobileSheet();
+    }
+  }
+}
+
+function openMobileSheet() {
+  if (DOM.mobileSheet) {
+    DOM.mobileSheet.classList.add('open');
+    updateMobileSheet();
+  }
+  if (DOM.mobileOverlay) {
+    DOM.mobileOverlay.classList.add('open');
+  }
+}
+
+function closeMobileSheet() {
+  if (DOM.mobileSheet) {
+    DOM.mobileSheet.classList.remove('open');
+  }
+  if (DOM.mobileOverlay) {
+    DOM.mobileOverlay.classList.remove('open');
+  }
+}
+
+function updateMobileSheet() {
+  const config = MEMBERS[state.currentMember];
+  
+  // Update title
+  if (DOM.sheetTitle) {
+    DOM.sheetTitle.textContent = config.topic + ' - Behind the Scenes';
+  }
+  
+  // Update algorithm
+  if (DOM.sheetAlgo) {
+    let code = '';
+    switch (state.currentMember) {
+      case 'omkar':
+        code = state.currentSubView === 'stack' 
+          ? PSEUDOCODE.stack.push 
+          : PSEUDOCODE.queue.enqueue;
+        break;
+      case 'prajwal':
+        code = PSEUDOCODE.linkedlist.insert;
+        break;
+      case 'nagaraj':
+        code = PSEUDOCODE.memory.malloc;
+        break;
+    }
+    DOM.sheetAlgo.innerHTML = `<pre>${code}</pre>`;
+  }
+  
+  // Update stats
+  if (DOM.sheetSize) {
+    switch (state.currentMember) {
+      case 'omkar':
+        DOM.sheetSize.textContent = state.currentSubView === 'stack' 
+          ? state.stack.length 
+          : state.queue.length;
+        break;
+      case 'prajwal':
+        DOM.sheetSize.textContent = state.linkedList.length;
+        break;
+      case 'nagaraj':
+        DOM.sheetSize.textContent = getTotalAllocated() + 'B';
+        break;
+    }
+  }
+  
+  if (DOM.sheetTop) {
+    switch (state.currentMember) {
+      case 'omkar':
+        DOM.sheetTop.textContent = state.currentSubView === 'stack' 
+          ? (state.stack.length > 0 ? state.stack.length - 1 : -1)
+          : (state.queue.length > 0 ? 0 : -1);
+        break;
+      case 'prajwal':
+        DOM.sheetTop.textContent = state.linkedList.length > 0 ? 'HEAD' : 'NULL';
+        break;
+      case 'nagaraj':
+        DOM.sheetTop.textContent = state.memoryBlocks.length;
+        break;
+    }
+  }
+}
+
+// ============================================
+// PWA INSTALL FUNCTIONALITY
+// ============================================
+
+let deferredPrompt = null;
+
+function setupPWA() {
+  // Listen for install prompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install prompt after 3 seconds
+    setTimeout(() => {
+      if (DOM.pwaPrompt && deferredPrompt) {
+        DOM.pwaPrompt.classList.add('show');
+      }
+    }, 3000);
+  });
+  
+  // Install button click
+  if (DOM.pwaInstall) {
+    DOM.pwaInstall.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('PWA install outcome:', outcome);
+        deferredPrompt = null;
+        hidePWAPrompt();
+      }
+    });
+  }
+  
+  // Later button click
+  if (DOM.pwaLater) {
+    DOM.pwaLater.addEventListener('click', () => {
+      hidePWAPrompt();
+      // Don't show again for 24 hours
+      localStorage.setItem('pwa-prompt-dismissed', Date.now());
+    });
+  }
+  
+  // Check if already dismissed recently
+  const dismissed = localStorage.getItem('pwa-prompt-dismissed');
+  if (dismissed && Date.now() - parseInt(dismissed) < 86400000) {
+    // Less than 24 hours, don't show
+    deferredPrompt = null;
+  }
+  
+  // Listen for successful install
+  window.addEventListener('appinstalled', () => {
+    console.log('PWA installed successfully');
+    hidePWAPrompt();
+    deferredPrompt = null;
+  });
+}
+
+function hidePWAPrompt() {
+  if (DOM.pwaPrompt) {
+    DOM.pwaPrompt.classList.remove('show');
+  }
+}

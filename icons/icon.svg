@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#2d2d2d"/>
+  <text x="256" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="120" fill="#f5f3ef">{</text>
+  <text x="256" y="320" text-anchor="middle" font-family="Georgia, serif" font-size="60" fill="#f5f3ef">DSA</text>
+  <text x="256" y="400" text-anchor="middle" font-family="Georgia, serif" font-size="120" fill="#f5f3ef">}</text>
+  <rect x="80" y="420" width="80" height="12" rx="6" fill="#b8e0c8"/>
+  <rect x="180" y="420" width="60" height="12" rx="6" fill="#a8d4e6"/>
+  <rect x="260" y="420" width="90" height="12" rx="6" fill="#d4c4e8"/>
+  <rect x="370" y="420" width="70" height="12" rx="6" fill="#f5e6b3"/>
+</svg>
