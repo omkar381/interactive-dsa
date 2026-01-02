@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Structures Visualized | Interactive Learning Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style_backup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">DataStructures</span>
+          <span class="logo-subtitle">Visualized</span>
+        </div>
+      </div>
+      
+      <nav class="main-nav" id="main-nav">
+        <button class="nav-btn active" data-view="stack">
+          <span class="nav-icon">📚</span>
+          <span>Stack</span>
+        </button>
+        <button class="nav-btn" data-view="queue">
+          <span class="nav-icon">🚶</span>
+          <span>Queue</span>
+        </button>
+        <button class="nav-btn" data-view="linkedlist">
+          <span class="nav-icon">🔗</span>
+          <span>Linked List</span>
+        </button>
+        <button class="nav-btn" data-view="tree">
+          <span class="nav-icon">🌳</span>
+          <span>Binary Tree</span>
+        </button>
+        <button class="nav-btn" data-view="memory">
+          <span class="nav-icon">🧠</span>
+          <span>Memory</span>
+        </button>
+      </nav>
+
+      <div class="header-controls">
+        <div class="speed-control">
+          <label>Speed:</label>
+          <input type="range" id="speed-slider" min="0.25" max="2" step="0.25" value="1">
+          <span id="speed-value">1x</span>
+        </div>
+        <button class="icon-btn" id="toggle-mode" title="Toggle Auto/Step Mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="play-icon">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Left Panel: Controls -->
+      <aside class="panel control-panel">
+        <div class="panel-header">
+          <h2>Control Panel</h2>
+          <span class="badge" id="ds-badge">LIFO</span>
+        </div>
+        
+        <div class="panel-content" id="control-content">
+          <!-- Dynamic controls inserted here -->
+        </div>
+
+        <!-- Operation History -->
+        <div class="history-section">
+          <h3>📜 Operation History</h3>
+          <div class="history-list" id="history-list">
+            <div class="history-empty">No operations yet</div>
+          </div>
+        </div>
+
+        <!-- Undo/Redo -->
+        <div class="action-buttons">
+          <button class="btn btn-outline" id="undo-btn" disabled>
+            ↶ Undo
+          </button>
+          <button class="btn btn-outline" id="redo-btn" disabled>
+            ↷ Redo
+          </button>
+          <button class="btn btn-danger" id="reset-btn">
+            🗑 Reset
+          </button>
+        </div>
+      </aside>
+
+      <!-- Center: Visualization Canvas -->
+      <section class="visualization-area">
+        <!-- Real-life Analogy Banner -->
+        <div class="analogy-banner" id="analogy-banner">
+          <div class="analogy-icon">💡</div>
+          <div class="analogy-content">
+            <strong>Real-Life Analogy:</strong>
+            <span id="analogy-text">Think of a stack of plates - you can only add or remove from the top!</span>
+          </div>
+        </div>
+
+        <!-- Main Visualization -->
+        <div class="canvas-container" id="canvas-container">
+          <div class="visualization" id="visualization">
+            <!-- Dynamic visualization content -->
+          </div>
+        </div>
+
+        <!-- Memory View -->
+        <div class="memory-view" id="memory-view">
+          <h4>🧠 Memory Representation</h4>
+          <div class="memory-grid" id="memory-grid">
+            <!-- Memory cells -->
+          </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <div class="status-item">
+            <span class="status-label">Size:</span>
+            <span class="status-value" id="status-size">0</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Capacity:</span>
+            <span class="status-value" id="status-capacity">8</span>
+          </div>
+        </div>
+
+        <!-- Explanation Toast -->
+        <div class="explanation-toast" id="explanation-toast">
+          <div class="toast-icon">✨</div>
+          <div class="toast-text" id="toast-text">Ready to learn! Start by performing an operation.</div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Explanation -->
+      <aside class="panel explanation-panel">
+        <div class="panel-header">
+          <h2 id="concept-title">Understanding Stack</h2>
+        </div>
+
+        <!-- Concept Definition -->
+        <div class="concept-card" id="concept-card">
+          <div class="concept-header">
+            <span class="concept-badge">📖 CONCEPT</span>
+          </div>
+          <h3 id="definition-title">What is a Stack?</h3>
+          <p id="definition-text">
+            A <strong>Stack</strong> is a linear data structure that follows the 
+            <strong>LIFO (Last In, First Out)</strong> principle. The last element 
+            added is the first one to be removed.
+          </p>
+          <ul class="key-points" id="key-points">
+            <li><span class="point-icon">✓</span> LIFO: Last In, First Out</li>
+            <li><span class="point-icon">✓</span> All operations at TOP only</li>
+            <li><span class="point-icon">✓</span> O(1) time complexity</li>
+          </ul>
+        </div>
+
+        <!-- Pseudocode Panel -->
+        <div class="pseudocode-panel">
+          <div class="pseudocode-header">
+            <h3>📝 Pseudocode</h3>
+            <span class="code-lang">Algorithm</span>
+          </div>
+          <pre class="pseudocode" id="pseudocode"><code><span class="keyword">function</span> <span class="function">push</span>(element):
+    <span class="keyword">if</span> top >= MAX_SIZE - 1:
+        <span class="keyword">return</span> <span class="string">"OVERFLOW"</span>
+    top = top + 1
+    stack[top] = element</code></pre>
+        </div>
+
+        <!-- Step-by-Step Narration -->
+        <div class="narration-panel">
+          <div class="narration-header">
+            <h3>📍 Step-by-Step</h3>
+            <span class="step-counter" id="step-counter">Step 0/0</span>
+          </div>
+          <div class="narration-content" id="narration-content">
+            <div class="narration-step active">
+              <span class="step-number">1</span>
+              <span class="step-text">Click a button to start learning!</span>
+            </div>
+          </div>
+          <div class="step-controls">
+            <button class="btn btn-sm" id="prev-step" disabled>← Prev</button>
+            <button class="btn btn-sm btn-primary" id="next-step" disabled>Next →</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-team">
+          <span class="footer-label">Designed & Developed by</span>
+          <div class="team-members">
+            <div class="team-member">
+              <span class="member-name">Omkar Padashetty</span>
+              <span class="member-usn">3PD24CS131</span>
+            </div>
+            <div class="team-member">
+              <span class="member-name">Nagraj Bhadrashetty</span>
+              <span class="member-usn">3PD24CS121</span>
+            </div>
+            <div class="team-member">
+              <span class="member-name">Prajwal Math</span>
+              <span class="member-usn">3PD24CS140</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-guide">
+          <span class="footer-label">Under Guidance of</span>
+          <span class="guide-name">Dr. Pooja Aspalli Ma'am</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

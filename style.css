@@ -2038,27 +2038,28 @@ body {
 }
 
 /* ============================================
-   MOBILE RESPONSIVE DESIGN
+   MOBILE RESPONSIVE DESIGN - COMPLETE REWRITE
    ============================================ */
 
 /* Tablet View */
 @media (max-width: 1200px) {
   .main-content {
-    grid-template-columns: 280px 1fr 280px;
+    grid-template-columns: 260px 1fr 260px;
     gap: 12px;
     padding: 12px;
   }
   
   .floating-controls {
-    width: 180px;
+    width: 170px;
     padding: 12px;
   }
 }
 
 @media (max-width: 1024px) {
   .main-content {
-    grid-template-columns: 240px 1fr 240px;
+    grid-template-columns: 220px 1fr 220px;
     gap: 10px;
+    padding: 10px;
   }
   
   .header {
@@ -2066,235 +2067,18 @@ body {
   }
   
   .logo-text {
-    font-size: 1.4rem;
-  }
-  
-  .guide-name {
-    font-size: 1rem;
-  }
-  
-  .floating-controls {
-    width: 160px;
-    right: 10px;
-    top: 50px;
-  }
-}
-
-/* Mobile Landscape & Small Tablets */
-@media (max-width: 900px) {
-  .main-content {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 0;
-    padding: 8px;
-  }
-  
-  /* Hide side panels on mobile - use bottom sheet instead */
-  .members-panel {
-    display: none;
-  }
-  
-  .process-panel {
-    display: none;
-  }
-  
-  /* Make whiteboard full width */
-  .whiteboard-area {
-    grid-column: 1;
-    width: 100%;
-  }
-  
-  .whiteboard-container {
-    padding: 0;
-  }
-  
-  .whiteboard-frame {
-    border-radius: 12px;
-    min-height: 60vh;
-  }
-  
-  /* Mobile header */
-  .header {
-    padding: 10px 16px;
-    flex-wrap: wrap;
-  }
-  
-  .header-left {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .header-divider {
-    display: none;
-  }
-  
-  .guide-info {
-    display: none;
-  }
-  
-  .logo {
-    gap: 6px;
-  }
-  
-  .logo-text {
     font-size: 1.3rem;
   }
   
-  .logo-sub {
-    font-size: 0.65rem;
+  .guide-name {
+    font-size: 0.95rem;
   }
   
-  .logo-bracket {
-    font-size: 2rem;
-  }
-  
-  /* Floating controls - bottom positioned */
   .floating-controls {
-    position: fixed;
-    top: auto;
-    bottom: 80px;
-    right: 10px;
-    width: 160px;
-    max-height: 50vh;
-    z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  }
-  
-  /* Status at bottom */
-  .status-chalk {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 8px 16px;
-    background: var(--bg-cream);
-    border-top: 2px solid var(--chalk-dark);
-    justify-content: center;
-    z-index: 999;
-  }
-}
-
-/* Mobile Portrait */
-@media (max-width: 600px) {
-  html, body {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  
-  #app {
-    min-height: 100vh;
-    height: auto;
-    overflow: visible;
-  }
-  
-  .header {
-    padding: 8px 12px;
-    position: sticky;
-    top: 0;
-    z-index: 1001;
-    background: var(--bg-cream);
-  }
-  
-  .logo-text {
-    font-size: 1.1rem;
-  }
-  
-  .logo-sub {
-    font-size: 0.6rem;
-  }
-  
-  .logo-bracket {
-    font-size: 1.6rem;
-  }
-  
-  .main-content {
-    padding: 6px;
-    padding-bottom: 140px; /* Space for mobile nav */
-  }
-  
-  .whiteboard-frame {
-    min-height: 55vh;
-    border-radius: 10px;
+    width: 150px;
+    right: 8px;
+    top: 50px;
     padding: 10px;
-  }
-  
-  .whiteboard-header {
-    padding: 8px 12px;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  
-  .topic-label {
-    font-size: 1.2rem;
-  }
-  
-  .chalk-mark {
-    font-size: 0.6rem;
-  }
-  
-  .whiteboard {
-    min-height: 40vh;
-    padding: 10px;
-  }
-  
-  /* Stack elements smaller */
-  .stack-element {
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    min-width: 60px;
-  }
-  
-  .queue-element {
-    padding: 10px 16px;
-    font-size: 1rem;
-    min-width: 50px;
-  }
-  
-  .node-box {
-    padding: 8px;
-    min-width: 50px;
-  }
-  
-  .node-data {
-    font-size: 1rem;
-    padding: 6px 10px;
-  }
-  
-  .node-next {
-    font-size: 0.6rem;
-    padding: 2px 6px;
-  }
-  
-  .node-arrow {
-    font-size: 1rem;
-    margin: 0 3px;
-  }
-  
-  /* Memory blocks smaller */
-  .mem-block {
-    padding: 6px 4px;
-    min-height: 50px;
-  }
-  
-  .block-name, .block-addr, .block-size {
-    font-size: 0.6rem;
-  }
-  
-  /* Floating controls - full width at bottom */
-  .floating-controls {
-    position: fixed;
-    bottom: 50px;
-    left: 10px;
-    right: 10px;
-    width: auto;
-    max-height: 45vh;
-    border-radius: 12px;
-  }
-  
-  .floating-controls-header h3 {
-    font-size: 0.9rem;
   }
   
   .sketch-btn {
@@ -2303,33 +2087,340 @@ body {
   }
   
   .sketch-input {
-    padding: 8px 10px;
-    font-size: 0.9rem;
-  }
-  
-  .btn-row {
-    gap: 6px;
-  }
-  
-  /* Status bar */
-  .status-chalk {
-    padding: 6px 12px;
+    padding: 8px;
     font-size: 0.85rem;
-  }
-  
-  .status-label, .status-value {
-    font-size: 0.8rem;
   }
 }
 
-/* Very Small Phones */
-@media (max-width: 400px) {
+/* ============================================
+   MOBILE VIEW (< 900px) - SINGLE COLUMN LAYOUT
+   ============================================ */
+@media (max-width: 900px) {
+  /* Allow scrolling */
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
+  }
+  
+  #app {
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header - sticky at top */
+  .header {
+    padding: 10px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-cream);
+    border-bottom: 2px solid var(--chalk-dark);
+  }
+  
+  .header-left {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .header-divider,
+  .guide-info {
+    display: none;
+  }
+  
+  .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .logo-sub {
+    font-size: 0.6rem;
+  }
+  
+  .logo-bracket {
+    font-size: 1.8rem;
+  }
+  
+  /* Main content - single column */
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px;
+    padding-bottom: 70px; /* Space for bottom nav */
+    flex: 1;
+  }
+  
+  /* Hide desktop side panels */
+  .members-panel,
+  .process-panel {
+    display: none !important;
+  }
+  
+  /* Whiteboard - takes full width */
+  .whiteboard-area {
+    width: 100%;
+    order: 1;
+  }
+  
+  .whiteboard-container {
+    padding: 0;
+  }
+  
+  .whiteboard-frame {
+    border-radius: 12px;
+    padding: 10px;
+    position: relative;
+    min-height: auto;
+  }
+  
+  .whiteboard-header {
+    padding: 8px 12px;
+  }
+  
+  .topic-label {
+    font-size: 1.1rem;
+  }
+  
+  .chalk-mark {
+    display: none;
+  }
+  
+  /* Whiteboard visualization */
+  .whiteboard {
+    min-height: 35vh;
+    padding: 15px 10px;
+  }
+  
+  /* FLOATING CONTROLS - Make it inline on mobile, not floating */
+  .floating-controls {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    max-height: none !important;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: none;
+    border: 2px dashed var(--chalk-light);
+    background: var(--bg-cream);
+  }
+  
+  .floating-controls-header {
+    padding: 8px 12px;
+  }
+  
+  .floating-controls-header h3 {
+    font-size: 1rem;
+  }
+  
+  .control-content {
+    padding: 10px;
+  }
+  
+  .view-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .view-toggle .sketch-btn {
+    flex: 1;
+  }
+  
+  .btn-row {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-row .sketch-btn {
+    flex: 1;
+  }
+  
+  .sketch-btn {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+  
+  .sketch-input {
+    padding: 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 44px;
+    margin-bottom: 8px;
+  }
+  
+  /* Status - inline, not fixed */
+  .status-chalk {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: var(--bg-notebook);
+    border: 2px dashed var(--chalk-light);
+    border-radius: 8px;
+    justify-content: center;
+  }
+  
+  /* Stack elements - smaller for mobile */
+  .stack-sketch {
+    padding: 10px;
+  }
+  
+  .stack-drawing {
+    gap: 6px;
+  }
+  
+  .stack-element {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    min-width: 70px;
+  }
+  
+  .stack-label,
+  .queue-label {
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+  
+  /* Queue elements */
+  .queue-sketch {
+    padding: 10px;
+  }
+  
+  .queue-drawing {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .queue-element {
+    padding: 12px 18px;
+    font-size: 1rem;
+    min-width: 50px;
+  }
+  
+  .queue-arrow {
+    font-size: 1.2rem;
+  }
+  
+  /* Linked list */
+  .linkedlist-sketch {
+    padding: 10px;
+    overflow-x: auto;
+  }
+  
+  .linkedlist-drawing {
+    flex-wrap: nowrap;
+    min-width: max-content;
+    padding: 10px 0;
+  }
+  
+  .node-box {
+    padding: 8px;
+    min-width: 55px;
+  }
+  
+  .node-data {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+  
+  .node-next {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+  }
+  
+  .node-arrow {
+    font-size: 1.2rem;
+    margin: 0 4px;
+  }
+  
+  .head-label {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .node-null {
+    font-size: 0.8rem;
+  }
+  
+  /* Memory visualization */
+  .memory-sketch {
+    padding: 10px;
+  }
+  
+  .heap-bar {
+    min-height: 80px;
+  }
+  
+  .mem-block {
+    padding: 8px 4px;
+    min-height: 70px;
+  }
+  
+  .block-name {
+    font-size: 0.7rem;
+  }
+  
+  .block-addr {
+    font-size: 0.55rem;
+  }
+  
+  .block-size {
+    font-size: 0.6rem;
+  }
+  
+  .mem-legend {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .legend-item {
+    font-size: 0.7rem;
+  }
+}
+
+/* ============================================
+   SMALL PHONES (< 500px)
+   ============================================ */
+@media (max-width: 500px) {
+  .header {
+    padding: 8px 10px;
+  }
+  
   .logo-text {
     font-size: 1rem;
   }
   
   .logo-bracket {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+  }
+  
+  .logo-sub {
+    display: none;
+  }
+  
+  .main-content {
+    padding: 6px;
+    padding-bottom: 65px;
+  }
+  
+  .whiteboard-frame {
+    padding: 8px;
+    border-radius: 10px;
+  }
+  
+  .whiteboard-header {
+    padding: 6px 10px;
   }
   
   .topic-label {
@@ -2337,27 +2428,45 @@ body {
   }
   
   .whiteboard {
-    min-height: 35vh;
-  }
-  
-  .stack-element {
-    padding: 8px 16px;
-    font-size: 1rem;
+    min-height: 30vh;
+    padding: 10px 8px;
   }
   
   .floating-controls {
-    bottom: 45px;
-    max-height: 40vh;
+    padding: 8px;
   }
   
   .sketch-btn {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .sketch-input {
+    padding: 10px;
+  }
+  
+  .stack-element {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  
+  .queue-element {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+  
+  .node-box {
+    min-width: 45px;
+  }
+  
+  .node-data {
+    font-size: 0.9rem;
     padding: 6px 10px;
-    font-size: 0.8rem;
   }
 }
 
 /* ============================================
-   MOBILE NAVIGATION (Bottom Tab Bar)
+   MOBILE BOTTOM NAVIGATION
    ============================================ */
 .mobile-nav {
   display: none;
@@ -2372,10 +2481,8 @@ body {
     right: 0;
     background: var(--bg-cream);
     border-top: 3px solid var(--chalk-dark);
-    padding: 0;
-    z-index: 1002;
-    justify-content: space-around;
-    align-items: stretch;
+    z-index: 1000;
+    justify-content: stretch;
   }
   
   .mobile-nav-btn {
@@ -2384,13 +2491,13 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px 8px;
+    padding: 8px 4px;
     background: transparent;
     border: none;
     border-right: 1px dashed var(--chalk-light);
     cursor: pointer;
-    transition: all 0.2s ease;
     font-family: var(--font-notes);
+    transition: background 0.2s;
   }
   
   .mobile-nav-btn:last-child {
@@ -2402,18 +2509,19 @@ body {
   }
   
   .mobile-nav-btn:active {
-    transform: scale(0.95);
+    background: var(--pastel-blue);
   }
   
   .nav-icon {
-    font-size: 1.3rem;
-    margin-bottom: 2px;
+    font-size: 1.4rem;
+    line-height: 1;
   }
   
   .nav-label {
-    font-size: 0.65rem;
-    color: var(--chalk-dark);
+    font-size: 0.7rem;
     font-weight: 600;
+    color: var(--chalk-dark);
+    margin-top: 2px;
   }
   
   .nav-topic {
@@ -2422,30 +2530,67 @@ body {
   }
 }
 
+@media (max-width: 500px) {
+  .mobile-nav-btn {
+    padding: 6px 2px;
+  }
+  
+  .nav-icon {
+    font-size: 1.2rem;
+  }
+  
+  .nav-label {
+    font-size: 0.6rem;
+  }
+  
+  .nav-topic {
+    display: none;
+  }
+}
+
 /* ============================================
-   MOBILE BOTTOM SHEET (Info Panel)
+   MOBILE INFO SHEET (Bottom Sheet)
    ============================================ */
-.mobile-sheet {
+.mobile-sheet,
+.mobile-overlay {
   display: none;
 }
 
 @media (max-width: 900px) {
+  .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+  }
+  
+  .mobile-overlay.open {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+  }
+  
   .mobile-sheet {
-    display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     max-height: 70vh;
     background: var(--bg-cream);
-    border-top: 3px solid var(--chalk-dark);
     border-radius: 20px 20px 0 0;
-    z-index: 1003;
+    border-top: 3px solid var(--chalk-dark);
+    z-index: 1002;
     transform: translateY(100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
     padding: 16px;
-    padding-bottom: 80px;
+    padding-bottom: 20px;
   }
   
   .mobile-sheet.open {
@@ -2469,11 +2614,6 @@ body {
     color: var(--chalk-dark);
   }
   
-  .sheet-content {
-    padding: 0 8px;
-  }
-  
-  /* Algorithm in sheet */
   .sheet-algo {
     background: var(--chalk-dark);
     color: var(--bg-cream);
@@ -2483,33 +2623,38 @@ body {
     font-size: 0.75rem;
     overflow-x: auto;
     margin-bottom: 16px;
+    white-space: pre;
   }
   
-  /* Stats in sheet */
+  .sheet-algo pre {
+    margin: 0;
+  }
+  
   .sheet-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    margin-bottom: 16px;
   }
   
   .sheet-stat {
     text-align: center;
-    padding: 10px;
+    padding: 12px 8px;
     background: var(--bg-notebook);
-    border-radius: 8px;
+    border-radius: 10px;
     border: 2px dashed var(--chalk-light);
   }
   
   .sheet-stat-icon {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   .sheet-stat-value {
     font-family: var(--font-handwritten);
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: var(--chalk-dark);
+    display: block;
+    margin: 4px 0;
   }
   
   .sheet-stat-label {
@@ -2519,97 +2664,36 @@ body {
 }
 
 /* ============================================
-   MOBILE OVERLAY
-   ============================================ */
-.mobile-overlay {
-  display: none;
-}
-
-@media (max-width: 900px) {
-  .mobile-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 1002;
-  }
-  
-  .mobile-overlay.open {
-    display: block;
-  }
-}
-
-/* ============================================
-   LANDSCAPE MODE OPTIMIZATIONS
-   ============================================ */
-@media (max-width: 900px) and (orientation: landscape) {
-  .whiteboard-frame {
-    min-height: 70vh;
-  }
-  
-  .whiteboard {
-    min-height: 50vh;
-  }
-  
-  .floating-controls {
-    max-height: 60vh;
-    width: 180px;
-    bottom: 10px;
-    right: 10px;
-    left: auto;
-  }
-  
-  .mobile-nav {
-    padding: 6px 0;
-  }
-  
-  .mobile-nav-btn {
-    padding: 6px 8px;
-  }
-  
-  .nav-icon {
-    font-size: 1.1rem;
-  }
-  
-  .nav-label {
-    font-size: 0.6rem;
-  }
-}
-
-/* ============================================
    PWA INSTALL PROMPT
    ============================================ */
 .pwa-install-prompt {
   display: none;
   position: fixed;
-  bottom: 70px;
+  bottom: 80px;
   left: 16px;
   right: 16px;
   background: var(--chalk-dark);
   color: var(--bg-cream);
   padding: 16px;
   border-radius: 12px;
-  z-index: 1004;
+  z-index: 1005;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.pwa-install-prompt.show {
+  display: block;
   animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(100%);
+    transform: translateY(50px);
     opacity: 0;
   }
   to {
     transform: translateY(0);
     opacity: 1;
   }
-}
-
-.pwa-install-prompt.show {
-  display: block;
 }
 
 .pwa-prompt-content {
@@ -2647,7 +2731,6 @@ body {
   font-family: var(--font-notes);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .pwa-btn-install {
@@ -2661,63 +2744,41 @@ body {
   color: var(--bg-cream);
 }
 
-.pwa-btn:active {
-  transform: scale(0.95);
-}
-
 /* ============================================
-   TOUCH IMPROVEMENTS
+   LANDSCAPE MODE
    ============================================ */
-@media (hover: none) and (pointer: coarse) {
-  /* Better touch targets */
-  .member-btn,
-  .sketch-btn,
+@media (max-width: 900px) and (orientation: landscape) {
+  .whiteboard {
+    min-height: 50vh;
+  }
+  
   .mobile-nav-btn {
-    min-height: 44px;
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px 12px;
   }
   
-  .sketch-input {
-    min-height: 44px;
-    font-size: 16px; /* Prevent zoom on iOS */
+  .nav-icon {
+    font-size: 1.2rem;
   }
   
-  /* Remove hover effects on touch */
-  .member-btn:hover,
-  .sketch-btn:hover {
-    transform: none;
-  }
-  
-  /* Active state instead */
-  .member-btn:active,
-  .sketch-btn:active {
-    transform: scale(0.97);
-    opacity: 0.9;
+  .nav-topic {
+    display: none;
   }
 }
 
 /* ============================================
-   SAFE AREA (Notched Phones)
+   SAFE AREA SUPPORT (Notch phones)
    ============================================ */
-@supports (padding: max(0px)) {
-  .header {
-    padding-top: max(10px, env(safe-area-inset-top));
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
-  }
-  
-  .mobile-nav {
-    padding-bottom: max(0px, env(safe-area-inset-bottom));
-  }
-  
-  .floating-controls {
-    bottom: calc(80px + env(safe-area-inset-bottom));
-  }
-  
-  @media (max-width: 600px) {
-    .floating-controls {
-      bottom: calc(50px + env(safe-area-inset-bottom));
-      left: max(10px, env(safe-area-inset-left));
-      right: max(10px, env(safe-area-inset-right));
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  @media (max-width: 900px) {
+    .mobile-nav {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .main-content {
+      padding-bottom: calc(70px + env(safe-area-inset-bottom));
     }
   }
 }
+
