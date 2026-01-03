@@ -27,16 +27,16 @@ const CONFIG = {
 const MEMBERS = {
   nagaraj: {
     name: 'Nagaraj',
-    topic: 'Memory Management',
-    badge: 'HEAP',
+    topic: 'Binary Search',
+    badge: 'O(log n)',
     definition: {
-      title: 'What is Memory Management?',
-      text: 'Memory Management is how programs request, use, and release memory during runtime. In C, we use <strong>malloc</strong>, <strong>calloc</strong>, <strong>realloc</strong>, and <strong>free</strong> to manage heap memory.',
+      title: 'What is Binary Search?',
+      text: 'Binary Search is an efficient algorithm to find an element in a <strong>sorted array</strong>. It repeatedly divides the search space in half, comparing the target with the middle element.',
       points: [
-        '→ malloc: allocate uninitialized memory',
-        '→ calloc: allocate + initialize to zero',
-        '→ realloc: resize existing allocation',
-        '→ free: release memory back to heap'
+        '→ Time Complexity: O(log n)',
+        '→ Requires a SORTED array',
+        '→ Divide and Conquer approach',
+        '→ Much faster than Linear Search'
       ]
     }
   },
@@ -72,66 +72,96 @@ const MEMBERS = {
   }
 };
 
-// Pseudocode templates
+// C Code templates
 const PSEUDOCODE = {
   stack: {
-    push: `function push(element):
-    if top >= MAX_SIZE - 1:
-        return "OVERFLOW"
-    top = top + 1
-    stack[top] = element`,
-    pop: `function pop():
-    if top < 0:
-        return "UNDERFLOW"
-    element = stack[top]
-    top = top - 1
-    return element`
+    push: `void push(int element) {
+    if (top >= MAX_SIZE - 1) {
+        printf("OVERFLOW\\n");
+        return;
+    }
+    top++;
+    stack[top] = element;
+}`,
+    pop: `int pop() {
+    if (top < 0) {
+        printf("UNDERFLOW\\n");
+        return -1;
+    }
+    int element = stack[top];
+    top--;
+    return element;
+}`
   },
   queue: {
-    enqueue: `function enqueue(element):
-    if rear >= MAX_SIZE - 1:
-        return "OVERFLOW"
-    rear = rear + 1
-    queue[rear] = element`,
-    dequeue: `function dequeue():
-    if front > rear:
-        return "UNDERFLOW"
-    element = queue[front]
-    front = front + 1
-    return element`
+    enqueue: `void enqueue(int element) {
+    if (rear >= MAX_SIZE - 1) {
+        printf("OVERFLOW\\n");
+        return;
+    }
+    rear++;
+    queue[rear] = element;
+}`,
+    dequeue: `int dequeue() {
+    if (front > rear) {
+        printf("UNDERFLOW\\n");
+        return -1;
+    }
+    int element = queue[front];
+    front++;
+    return element;
+}`
   },
   linkedlist: {
-    insert: `function insertAtHead(value):
-    newNode = new Node(value)
-    newNode.next = head
-    head = newNode`,
-    delete: `function deleteNode(value):
-    if head.data == value:
-        head = head.next
-        return
-    curr = head
-    while curr.next != null:
-        if curr.next.data == value:
-            curr.next = curr.next.next
-            return
-        curr = curr.next`
+    insert: `void insertAtHead(int value) {
+    Node* newNode = malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = head;
+    head = newNode;
+}`,
+    delete: `void deleteNode(int value) {
+    if (head->data == value) {
+        head = head->next;
+        return;
+    }
+    Node* curr = head;
+    while (curr->next != NULL) {
+        if (curr->next->data == value) {
+            curr->next = curr->next->next;
+            return;
+        }
+        curr = curr->next;
+    }
+}`
   },
-  memory: {
-    malloc: `void* malloc(size_t size):
-    // Allocates 'size' bytes
-    // Memory is UNINITIALIZED
-    ptr = find_free_block(size)
-    return ptr`,
-    calloc: `void* calloc(size_t n, size_t size):
-    // Allocates n * size bytes
-    // Memory is ZERO-INITIALIZED
-    ptr = malloc(n * size)
-    memset(ptr, 0, n * size)
-    return ptr`,
-    free: `void free(void* ptr):
-    // Returns memory to heap
-    mark_as_free(ptr)
-    // ptr is now invalid!`
+  binarySearch: {
+    search: `int binarySearch(int arr[], int n, int target) {
+    int left = 0;
+    int right = n - 1;
+    
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        
+        if (arr[mid] == target)
+            return mid;  // Found!
+        else if (arr[mid] < target)
+            left = mid + 1;  // Search right
+        else
+            right = mid - 1; // Search left
+    }
+    return -1;  // Not found
+}`,
+    sort: `void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}`
   }
 };
 
@@ -148,8 +178,20 @@ const state = {
   stack: [],
   queue: [],
   linkedList: [],
-  memoryBlocks: [],
-  nextMemId: 1,
+  
+  // Binary Search state
+  bsArray: [],
+  bsSortedArray: [],
+  bsIsSorted: false,
+  bsSearchTarget: null,
+  bsLeft: -1,
+  bsRight: -1,
+  bsMid: -1,
+  bsFoundIndex: -1,
+  bsSearching: false,
+  bsNotFound: false,
+  bsSorting: false,
+  bsSortingIndices: [], // indices being compared/swapped
   
   // Steps
   currentSteps: [],
@@ -187,27 +229,10 @@ function initDOM() {
     // Status
     statusSize: document.getElementById('status-size'),
     statusCapacity: document.getElementById('status-capacity'),
-    toastText: document.getElementById('toast-text'),
-    
-    // Memory display
-    memTop: document.getElementById('mem-top'),
-    memSize: document.getElementById('mem-size'),
-    
-    // Mobile elements
-    mobileNav: document.getElementById('mobile-nav'),
-    mobileNavBtns: document.querySelectorAll('.mobile-nav-btn[data-member]'),
-    infoBtn: document.getElementById('info-btn'),
-    mobileSheet: document.getElementById('mobile-sheet'),
-    mobileOverlay: document.getElementById('mobile-overlay'),
-    sheetAlgo: document.getElementById('sheet-algo'),
-    sheetTop: document.getElementById('sheet-top'),
-    sheetSize: document.getElementById('sheet-size'),
-    sheetTitle: document.getElementById('sheet-title'),
-    
-    // PWA
-    pwaPrompt: document.getElementById('pwa-prompt'),
-    pwaInstall: document.getElementById('pwa-install'),
-    pwaLater: document.getElementById('pwa-later')
+    statusTop: document.getElementById('status-top'),
+    statusTime: document.getElementById('status-time'),
+    statusSpace: document.getElementById('status-space'),
+    toastText: document.getElementById('toast-text')
   };
 }
 
@@ -232,9 +257,8 @@ function addToHistory(operation, value) {
 function updateStatus(size, capacity) {
   if (DOM.statusSize) DOM.statusSize.textContent = size;
   if (DOM.statusCapacity) DOM.statusCapacity.textContent = capacity;
-  // Update memory display
-  if (DOM.memSize) DOM.memSize.textContent = size;
-  if (DOM.memTop) DOM.memTop.textContent = size > 0 ? size - 1 : -1;
+  // Update top index display
+  if (DOM.statusTop) DOM.statusTop.textContent = size > 0 ? size - 1 : -1;
 }
 
 function updateNarration(steps, activeIndex = 0) {
@@ -307,7 +331,7 @@ function switchMember(member) {
     setTimeout(() => {
       switch (member) {
         case 'nagaraj':
-          initMemoryView();
+          initBinarySearchView();
           break;
         case 'omkar':
           state.currentSubView = 'stack';
@@ -343,7 +367,7 @@ function initStackQueueView() {
       <button class="sketch-btn ${state.currentSubView === 'stack' ? 'primary' : ''}" id="show-stack">Stack</button>
       <button class="sketch-btn ${state.currentSubView === 'queue' ? 'primary' : ''}" id="show-queue">Queue</button>
     </div>
-    <input type="text" class="sketch-input" id="value-input" placeholder="Enter value..." maxlength="4">
+    <input type="text" class="sketch-input" id="value-input" placeholder="Enter value..." maxlength="4" autocomplete="off">
     <div class="btn-row">
       <button class="sketch-btn success" id="add-btn">${state.currentSubView === 'stack' ? 'Push' : 'Enqueue'}</button>
       <button class="sketch-btn danger" id="remove-btn">${state.currentSubView === 'stack' ? 'Pop' : 'Dequeue'}</button>
@@ -508,13 +532,13 @@ async function stackPop() {
   ];
   updateNarration(steps);
   
-  // First highlight the element
+  // First highlight the element with pulsing glow
   renderStack(state.stack.length - 1, 'highlight-pop');
-  await delay(200);
-  
-  // Then animate it flying out
-  renderStack(state.stack.length - 1, 'pop-out-up');
   await delay(500);
+  
+  // Then animate it flying out with spiral effect
+  renderStack(state.stack.length - 1, 'pop-out-up');
+  await delay(600);
   
   state.stack.pop();
   renderStack();
@@ -628,19 +652,19 @@ async function queueDequeue() {
   ];
   updateNarration(steps);
   
-  // First highlight the element
+  // First highlight the element with glowing effect
   renderQueue(0, 'highlight-dequeue');
-  await delay(200);
-  
-  // Then animate it sliding out to the left
-  renderQueue(0, 'dequeue-out-left');
   await delay(500);
+  
+  // Then animate it swooshing out to the left
+  renderQueue(0, 'dequeue-out-left');
+  await delay(600);
   
   state.queue.shift();
   
-  // Animate remaining elements sliding left
+  // Animate remaining elements sliding left with bounce
   renderQueue(-1, 'slide-left-queue');
-  await delay(300);
+  await delay(400);
   
   renderQueue();
   updateStatus(state.queue.length, CONFIG.QUEUE_MAX_SIZE);
@@ -671,12 +695,12 @@ function initLinkedListView() {
   if (!DOM.controlContent) return;
   
   DOM.controlContent.innerHTML = `
-    <input type="text" class="sketch-input" id="ll-input" placeholder="Enter value..." maxlength="4">
+    <input type="text" class="sketch-input" id="ll-input" placeholder="Enter value..." maxlength="4" autocomplete="off">
     <div class="btn-row">
       <button class="sketch-btn success" id="ll-insert-head">Insert Head</button>
       <button class="sketch-btn primary" id="ll-insert-tail">Insert Tail</button>
     </div>
-    <input type="text" class="sketch-input" id="ll-delete-input" placeholder="Value to delete..." maxlength="4" style="margin-top: 8px;">
+    <input type="text" class="sketch-input" id="ll-delete-input" placeholder="Value to delete..." maxlength="4" style="margin-top: 8px;" autocomplete="off">
     <button class="sketch-btn danger" id="ll-delete">Delete Node</button>
     <button class="sketch-btn" id="ll-reset" style="margin-top: 8px;">🗑 Clear All</button>
   `;
@@ -711,14 +735,22 @@ function renderLinkedList(highlightIndex = -1, animClass = '') {
     return;
   }
   
+  // Check if we're applying animation to all nodes (for reconnect effect)
+  const applyToAll = highlightIndex === -1 && animClass !== '';
+  
   let nodes = '<span class="head-label">HEAD</span>';
   state.linkedList.forEach((val, i) => {
+    const nodeAnimClass = (i === highlightIndex || applyToAll) ? animClass : '';
+    const arrowAnimClass = (i === highlightIndex && animClass === 'delete-node-explode') ? 'link-break' : 
+                          (applyToAll ? animClass : '');
     nodes += `
-      <div class="node-box ${i === highlightIndex ? animClass : ''}">
+      <div class="node-box ${nodeAnimClass}">
         <div class="node-data">${val}</div>
         <div class="node-next">next</div>
       </div>
-      ${i < state.linkedList.length - 1 ? '<span class="node-arrow">→</span>' : '<span class="node-arrow">→</span><span class="node-null">NULL</span>'}
+      ${i < state.linkedList.length - 1 ? 
+        `<span class="node-arrow ${arrowAnimClass}">→</span>` : 
+        `<span class="node-arrow ${arrowAnimClass}">→</span><span class="node-null">NULL</span>`}
     `;
   });
   
@@ -834,21 +866,31 @@ async function llDelete() {
   const steps = [
     `Searching for "${value}"...`,
     `Found at position ${index + 1}`,
-    'Updating previous node\'s next pointer...',
+    'Breaking link connections...',
+    'Reconnecting neighboring nodes...',
     '✓ Node deleted!'
   ];
   updateNarration(steps);
   
-  renderLinkedList(index, 'fade-out');
-  await delay(300);
+  // First highlight the node to delete
+  renderLinkedList(index, 'highlight-delete');
+  await delay(500);
+  
+  // Animate the node exploding/disappearing
+  renderLinkedList(index, 'delete-node-explode');
+  await delay(700);
   
   state.linkedList.splice(index, 1);
   input.value = '';
   
+  // Animate remaining nodes reconnecting
+  renderLinkedList(-1, 'reconnect-nodes');
+  await delay(400);
+  
   renderLinkedList();
   updateStatus(state.linkedList.length, CONFIG.LINKEDLIST_MAX_SIZE);
   addToHistory('DELETE', value);
-  showToast(`Deleted "${value}"`, '🗑️');
+  showToast(`Deleted "${value}"`, '💥');
   
   state.isAnimating = false;
 }
@@ -861,298 +903,482 @@ function llReset() {
 }
 
 // ============================================
-// NAGARAJ: MEMORY MANAGEMENT
+// NAGARAJ: BINARY SEARCH
 // ============================================
 
-function initMemoryView() {
+function initBinarySearchView() {
   if (!DOM.controlContent) return;
   
+  // Reset binary search state
+  state.bsSearching = false;
+  state.bsLeft = -1;
+  state.bsRight = -1;
+  state.bsMid = -1;
+  state.bsFoundIndex = -1;
+  state.bsNotFound = false;
+  
   DOM.controlContent.innerHTML = `
-    <input type="text" class="sketch-input" id="mem-name" placeholder="Variable name (e.g., ptr)" maxlength="6">
-    <input type="number" class="sketch-input" id="mem-size" placeholder="Size in bytes" min="1" max="128">
-    <div class="btn-row">
-      <button class="sketch-btn" id="mem-malloc" style="background: var(--pastel-yellow);">malloc</button>
-      <button class="sketch-btn" id="mem-calloc" style="background: var(--pastel-green);">calloc</button>
+    <input type="text" class="sketch-input" id="bs-input" placeholder="Enter number..." maxlength="4" autocomplete="off">
+    <button class="sketch-btn success" id="bs-add">Add Element</button>
+    <button class="sketch-btn primary" id="bs-sort" style="margin-top: 6px;">Sort Array</button>
+    <div style="margin-top: 10px; border-top: 1px dashed var(--chalk-light); padding-top: 10px;">
+      <input type="text" class="sketch-input" id="bs-search-input" placeholder="Search for..." maxlength="4" autocomplete="off">
+      <button class="sketch-btn" id="bs-search" style="background: var(--pastel-purple); margin-top: 6px;">🔍 Search</button>
     </div>
-    <div class="btn-row">
-      <button class="sketch-btn" id="mem-realloc" style="background: var(--pastel-purple);">realloc</button>
-      <button class="sketch-btn danger" id="mem-free">free</button>
-    </div>
-    <select class="sketch-input" id="mem-select" style="margin-top: 8px;">
-      <option value="">-- Select block --</option>
-    </select>
+    <button class="sketch-btn danger" id="bs-reset" style="margin-top: 10px;">Clear All</button>
   `;
   
-  const mallocBtn = document.getElementById('mem-malloc');
-  const callocBtn = document.getElementById('mem-calloc');
-  const reallocBtn = document.getElementById('mem-realloc');
-  const freeBtn = document.getElementById('mem-free');
+  const addBtn = document.getElementById('bs-add');
+  const sortBtn = document.getElementById('bs-sort');
+  const searchBtn = document.getElementById('bs-search');
+  const resetBtn = document.getElementById('bs-reset');
+  const input = document.getElementById('bs-input');
+  const searchInput = document.getElementById('bs-search-input');
   
-  if (mallocBtn) mallocBtn.addEventListener('click', memMalloc);
-  if (callocBtn) callocBtn.addEventListener('click', memCalloc);
-  if (reallocBtn) reallocBtn.addEventListener('click', memRealloc);
-  if (freeBtn) freeBtn.addEventListener('click', memFree);
+  if (addBtn) addBtn.addEventListener('click', bsAddElement);
+  if (sortBtn) sortBtn.addEventListener('click', bsSortArray);
+  if (searchBtn) searchBtn.addEventListener('click', bsStartSearch);
+  if (resetBtn) resetBtn.addEventListener('click', bsReset);
+  if (input) {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') bsAddElement();
+    });
+  }
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') bsStartSearch();
+    });
+  }
   
-  renderMemory();
-  updateMemorySelect();
-  updatePseudocode(PSEUDOCODE.memory.malloc);
-  updateStatus(getTotalAllocated(), CONFIG.HEAP_SIZE);
+  renderBinarySearch();
+  updatePseudocode(PSEUDOCODE.binarySearch.search);
+  updateStatus(state.bsArray.length, 10);
+  
+  // Initial narration based on current state
+  if (state.bsArray.length === 0) {
+    updateNarration([
+      'Welcome to Binary Search!',
+      '1️⃣ Add numbers to build an array',
+      '2️⃣ Sort the array (for 2+ elements)',
+      '3️⃣ Search for any number',
+      'Let\'s begin! Enter a number above.'
+    ]);
+  }
 }
 
-function getTotalAllocated() {
-  return state.memoryBlocks.reduce((sum, b) => sum + b.size, 0);
-}
-
-function generateAddr() {
-  return '0x' + (Math.floor(Math.random() * 0xFFFF) + 0x1000).toString(16).toUpperCase();
-}
-
-function updateMemorySelect() {
-  const select = document.getElementById('mem-select');
-  if (!select) return;
-  select.innerHTML = '<option value="">-- Select block --</option>' +
-    state.memoryBlocks.map(b => `<option value="${b.id}">${b.name} (${b.size}B)</option>`).join('');
-}
-
-function renderMemory(highlightId = -1, animClass = '') {
+function renderBinarySearch() {
   if (!DOM.visualization) return;
   
-  const total = getTotalAllocated();
-  const free = CONFIG.HEAP_SIZE - total;
+  // For single element or sorted array, use appropriate display
+  // During sorting, use bsSortedArray which holds the current state
+  let arr;
+  if (state.bsSorting && state.bsSortedArray.length > 0) {
+    arr = state.bsSortedArray;
+  } else if (state.bsArray.length === 1) {
+    arr = state.bsArray;
+  } else if (state.bsIsSorted && state.bsSortedArray.length > 0) {
+    arr = state.bsSortedArray;
+  } else {
+    arr = state.bsArray;
+  }
   
-  let blocks = '';
-  state.memoryBlocks.forEach(b => {
-    const width = Math.max((b.size / CONFIG.HEAP_SIZE) * 100, 10);
-    blocks += `
-      <div class="mem-block ${b.type === 'malloc' ? 'allocated-malloc' : 'allocated-calloc'} ${b.id === highlightId ? animClass : ''}" 
-           style="width: ${width}%;">
-        <span class="block-name">${b.name}</span>
-        <span class="block-addr">${b.addr}</span>
-        <span class="block-size">${b.size}B</span>
+  if (arr.length === 0) {
+    DOM.visualization.innerHTML = `
+      <div class="bs-sketch">
+        <div class="bs-empty">
+          Array is empty<br>
+          Add some numbers to begin!
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  let elements = '';
+  arr.forEach((val, i) => {
+    let stateClass = '';
+    let indexLabel = '';
+    
+    // Determine the state of this element during sorting
+    if (state.bsSorting) {
+      if (state.bsSortingIndices.includes(i)) {
+        stateClass = 'bs-sorting-active';
+      } else {
+        stateClass = 'bs-sorting';
+      }
+    }
+    // Determine the state of this element during search
+    else if (state.bsNotFound) {
+      // All elements dimmed when not found
+      stateClass = 'bs-not-found';
+    } else if (state.bsSearching) {
+      if (state.bsFoundIndex === i) {
+        stateClass = 'bs-found';
+      } else if (i === state.bsMid) {
+        stateClass = 'bs-mid';
+      } else if (i >= state.bsLeft && i <= state.bsRight) {
+        stateClass = 'bs-active';
+      } else {
+        stateClass = 'bs-dimmed';
+      }
+    }
+    
+    // Show pointer labels
+    if (state.bsSearching && state.bsFoundIndex === -1 && !state.bsNotFound) {
+      if (i === state.bsLeft) indexLabel = '<span class="bs-pointer bs-left-ptr">L</span>';
+      if (i === state.bsRight) indexLabel = '<span class="bs-pointer bs-right-ptr">R</span>';
+      if (i === state.bsMid) indexLabel = '<span class="bs-pointer bs-mid-ptr">M</span>';
+    }
+    
+    elements += `
+      <div class="bs-element-wrapper">
+        ${indexLabel}
+        <div class="bs-element ${stateClass}" data-index="${i}">
+          ${val}
+        </div>
+        <span class="bs-index">[${i}]</span>
       </div>
     `;
   });
   
-  if (free > 0) {
-    blocks += `
-      <div class="mem-block free-space" style="width: ${(free / CONFIG.HEAP_SIZE) * 100}%;">
-        <span>FREE</span>
-      </div>
-    `;
+  // Determine status text based on array state
+  let statusText;
+  let statusClass;
+  let showSortHint = false;
+  
+  if (arr.length === 1) {
+    // Single element is always sorted
+    statusText = '✓ Ready for Search (1 element)';
+    statusClass = 'sorted';
+  } else if (state.bsIsSorted) {
+    statusText = '✓ Sorted Array — Ready for Search!';
+    statusClass = 'sorted';
+  } else {
+    statusText = '⚠️ Unsorted — Click "Sort Array" first!';
+    statusClass = 'unsorted';
+    showSortHint = arr.length > 1; // Only show hint with 2+ elements
+  }
+  
+  // Build the result message
+  let resultMessage = '';
+  if (state.bsSearchTarget !== null) {
+    if (state.bsFoundIndex !== -1) {
+      resultMessage = `
+        <div class="bs-result-box bs-result-found">
+          <span class="bs-result-icon">🎯</span>
+          <div class="bs-result-content">
+            <span class="bs-result-label">Target: <strong>${state.bsSearchTarget}</strong></span>
+            <span class="bs-result-text bs-found-text">✓ Found at index [${state.bsFoundIndex}]!</span>
+          </div>
+        </div>
+      `;
+    } else if (state.bsNotFound) {
+      resultMessage = `
+        <div class="bs-result-box bs-result-not-found">
+          <span class="bs-result-icon">❌</span>
+          <div class="bs-result-content">
+            <span class="bs-result-label">Target: <strong>${state.bsSearchTarget}</strong></span>
+            <span class="bs-result-text bs-not-found-text">Element NOT found in array!</span>
+          </div>
+        </div>
+      `;
+    } else {
+      resultMessage = `
+        <div class="bs-target-info">
+          Searching for: <strong>${state.bsSearchTarget}</strong>
+        </div>
+      `;
+    }
   }
   
   DOM.visualization.innerHTML = `
-    <div class="memory-sketch">
-      <div class="heap-drawing">
-        <div class="heap-title">🧠 Heap Memory (${CONFIG.HEAP_SIZE} bytes)</div>
-        <div class="heap-bar">
-          ${blocks || '<div class="mem-block free-space" style="width: 100%;"><span>ALL FREE</span></div>'}
+    <div class="bs-sketch">
+      <div class="bs-title">🔍 Binary Search Visualization</div>
+      <div class="bs-status ${statusClass}">${statusText}</div>
+      ${showSortHint ? '<div class="bs-sort-hint">👆 Sort the array before searching!</div>' : ''}
+      <div class="bs-array-container">
+        <div class="bs-array ${state.bsNotFound ? 'bs-array-not-found' : ''}">
+          ${elements}
         </div>
       </div>
-      <div class="mem-legend">
-        <div class="legend-item"><span class="legend-color malloc"></span> malloc (uninitialized)</div>
-        <div class="legend-item"><span class="legend-color calloc"></span> calloc (zeroed)</div>
-        <div class="legend-item"><span class="legend-color free"></span> Free space</div>
+      ${resultMessage}
+      <div class="bs-legend">
+        <div class="legend-item"><span class="legend-color bs-active-legend"></span> Search Space</div>
+        <div class="legend-item"><span class="legend-color bs-mid-legend"></span> Middle Element</div>
+        <div class="legend-item"><span class="legend-color bs-dimmed-legend"></span> Eliminated</div>
+        <div class="legend-item"><span class="legend-color bs-found-legend"></span> Found!</div>
       </div>
     </div>
   `;
   
-  updateStatus(total, CONFIG.HEAP_SIZE);
+  updateStatus(arr.length, 10);
 }
 
-async function memMalloc() {
+async function bsAddElement() {
   if (state.isAnimating) return;
+  const input = document.getElementById('bs-input');
+  if (!input) return;
   
-  const nameInput = document.getElementById('mem-name');
-  const sizeInput = document.getElementById('mem-size');
+  const value = parseInt(input.value.trim());
   
-  const name = nameInput ? nameInput.value.trim() || `p${state.nextMemId}` : `p${state.nextMemId}`;
-  const size = sizeInput ? parseInt(sizeInput.value) || 0 : 0;
-  
-  if (size <= 0 || size > 128) {
-    showToast('Enter size (1-128 bytes)', '⚠️');
+  if (isNaN(value)) {
+    showToast('Please enter a valid number!', '⚠️');
     return;
   }
   
-  if (getTotalAllocated() + size > CONFIG.HEAP_SIZE) {
-    showToast('Not enough memory!', '❌');
+  if (state.bsArray.length >= 10) {
+    showToast('Array is full! Max 10 elements.', '❌');
     return;
   }
   
   state.isAnimating = true;
-  updatePseudocode(PSEUDOCODE.memory.malloc);
   
-  const steps = [
-    `malloc(${size}) called...`,
-    'Searching for free block...',
-    'Found space! Allocating...',
-    `⚠️ Memory is UNINITIALIZED!`,
-    `✓ Assigned to "${name}"`
-  ];
+  // Reset sorted state when adding new element
+  state.bsIsSorted = false;
+  state.bsSearching = false;
+  state.bsSearchTarget = null;
+  state.bsFoundIndex = -1;
+  state.bsNotFound = false;
+  
+  state.bsArray.push(value);
+  state.bsSortedArray = [...state.bsArray];
+  input.value = '';
+  
+  // Different narration based on array size
+  let steps;
+  if (state.bsArray.length === 1) {
+    steps = [
+      `Adding ${value} to the array...`,
+      'First element added!',
+      'Add more elements or search directly.'
+    ];
+  } else if (state.bsArray.length < 3) {
+    steps = [
+      `Adding ${value} to the array...`,
+      `Array now has ${state.bsArray.length} elements.`,
+      'Add more elements or click Sort to prepare for search.'
+    ];
+  } else {
+    steps = [
+      `Adding ${value} to the array...`,
+      `Array now has ${state.bsArray.length} elements.`,
+      '👉 Click "Sort Array" when ready to search!'
+    ];
+  }
   updateNarration(steps);
   
-  const block = {
-    id: state.nextMemId++,
-    name, size,
-    addr: generateAddr(),
-    type: 'malloc'
-  };
-  
-  state.memoryBlocks.push(block);
-  if (nameInput) nameInput.value = '';
-  if (sizeInput) sizeInput.value = '';
-  
-  renderMemory(block.id, 'pop-in');
-  updateMemorySelect();
-  addToHistory('MALLOC', `${name} (${size}B)`);
-  showToast(`malloc: ${size} bytes for "${name}"`, '📦');
+  renderBinarySearch();
+  addToHistory('ADD', value);
+  showToast(`Added ${value} to array`, '➕');
   
   await delay(CONFIG.ANIMATION_DURATION);
   state.isAnimating = false;
 }
 
-async function memCalloc() {
+async function bsSortArray() {
   if (state.isAnimating) return;
-  
-  const nameInput = document.getElementById('mem-name');
-  const sizeInput = document.getElementById('mem-size');
-  
-  const name = nameInput ? nameInput.value.trim() || `arr${state.nextMemId}` : `arr${state.nextMemId}`;
-  const size = sizeInput ? parseInt(sizeInput.value) || 0 : 0;
-  
-  if (size <= 0 || size > 128) {
-    showToast('Enter size (1-128 bytes)', '⚠️');
+  if (state.bsArray.length === 0) {
+    showToast('Array is empty!', '⚠️');
     return;
   }
   
-  if (getTotalAllocated() + size > CONFIG.HEAP_SIZE) {
-    showToast('Not enough memory!', '❌');
+  if (state.bsIsSorted) {
+    showToast('Array is already sorted!', '✓');
     return;
   }
   
   state.isAnimating = true;
-  updatePseudocode(PSEUDOCODE.memory.calloc);
+  state.bsSorting = true;
+  updatePseudocode(PSEUDOCODE.binarySearch.sort);
   
   const steps = [
-    `calloc(1, ${size}) called...`,
-    'Searching for free block...',
-    'Found space! Allocating...',
-    'Initializing all bytes to ZERO...',
-    `✓ Assigned to "${name}"`
+    'Starting to sort the array...',
+    'Using Bubble Sort algorithm...',
+    'Comparing adjacent elements...',
+    'Swapping if needed...',
+    '✓ Array is now sorted!'
   ];
   updateNarration(steps);
   
-  const block = {
-    id: state.nextMemId++,
-    name, size,
-    addr: generateAddr(),
-    type: 'calloc'
-  };
+  // Animate the sorting process
+  const arr = [...state.bsArray];
+  const n = arr.length;
   
-  state.memoryBlocks.push(block);
-  if (nameInput) nameInput.value = '';
-  if (sizeInput) sizeInput.value = '';
+  // Bubble sort with animation
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      // Highlight elements being compared
+      state.bsSortingIndices = [j, j + 1];
+      state.bsSortedArray = [...arr];
+      renderBinarySearch();
+      await delay(200);
+      
+      if (arr[j] > arr[j + 1]) {
+        // Swap
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        
+        // Update visual after swap
+        state.bsSortedArray = [...arr];
+        renderBinarySearch();
+        await delay(150);
+      }
+    }
+  }
   
-  renderMemory(block.id, 'pop-in');
-  updateMemorySelect();
-  addToHistory('CALLOC', `${name} (${size}B)`);
-  showToast(`calloc: ${size} zero-bytes for "${name}"`, '🧹');
+  state.bsSorting = false;
+  state.bsSortingIndices = [];
+  state.bsSortedArray = arr;
+  state.bsIsSorted = true;
+  state.bsSearching = false;
+  state.bsSearchTarget = null;
+  state.bsNotFound = false;
+  
+  renderBinarySearch();
+  addToHistory('SORT', state.bsSortedArray.join(', '));
+  showToast('Array sorted! Now you can search.', '✓');
   
   await delay(CONFIG.ANIMATION_DURATION);
   state.isAnimating = false;
+  updatePseudocode(PSEUDOCODE.binarySearch.search);
 }
 
-async function memRealloc() {
+async function bsStartSearch() {
   if (state.isAnimating) return;
   
-  const selectInput = document.getElementById('mem-select');
-  const sizeInput = document.getElementById('mem-size');
+  const input = document.getElementById('bs-search-input');
+  if (!input) return;
   
-  const blockId = selectInput ? parseInt(selectInput.value) : 0;
-  const newSize = sizeInput ? parseInt(sizeInput.value) || 0 : 0;
+  const target = parseInt(input.value.trim());
   
-  if (!blockId) {
-    showToast('Select a block first!', '⚠️');
+  if (isNaN(target)) {
+    showToast('Enter a number to search!', '⚠️');
     return;
   }
   
-  if (newSize <= 0 || newSize > 128) {
-    showToast('Enter new size (1-128)', '⚠️');
+  if (state.bsArray.length === 0) {
+    showToast('Array is empty! Add elements first.', '⚠️');
     return;
   }
   
-  const block = state.memoryBlocks.find(b => b.id === blockId);
-  if (!block) return;
-  
-  const diff = newSize - block.size;
-  if (diff > 0 && getTotalAllocated() + diff > CONFIG.HEAP_SIZE) {
-    showToast('Not enough memory!', '❌');
+  // Allow search on single element OR sorted array
+  if (state.bsArray.length > 1 && !state.bsIsSorted) {
+    showToast('Please sort the array first!', '⚠️');
+    updateNarration([
+      '⚠️ Cannot search unsorted array!',
+      'Binary search requires a SORTED array.',
+      'Click "Sort Array" button first.',
+      'Then try searching again.'
+    ]);
     return;
   }
+  
+  // For single element, use the original array
+  const arr = state.bsArray.length === 1 ? state.bsArray : state.bsSortedArray;
   
   state.isAnimating = true;
+  updatePseudocode(PSEUDOCODE.binarySearch.search);
   
-  const oldSize = block.size;
-  block.size = newSize;
-  block.addr = generateAddr();
+  state.bsSearchTarget = target;
+  state.bsSearching = true;
+  state.bsFoundIndex = -1;
+  state.bsNotFound = false;
   
-  const steps = [
-    `realloc(${block.name}, ${newSize})...`,
-    `Old size: ${oldSize} bytes`,
-    newSize > oldSize ? 'Expanding allocation...' : 'Shrinking allocation...',
-    `✓ New size: ${newSize} bytes`
-  ];
-  updateNarration(steps);
+  // For rendering purposes, make sure sorted array is set for single element
+  if (state.bsArray.length === 1) {
+    state.bsSortedArray = [...state.bsArray];
+  }
   
-  if (sizeInput) sizeInput.value = '';
+  let left = 0;
+  let right = arr.length - 1;
+  let found = false;
+  let iteration = 0;
   
-  renderMemory(block.id, 'pop-in');
-  updateMemorySelect();
-  addToHistory('REALLOC', `${block.name}: ${oldSize}→${newSize}B`);
-  showToast(`realloc: ${block.name} now ${newSize}B`, '🔄');
+  while (left <= right) {
+    iteration++;
+    const mid = Math.floor((left + right) / 2);
+    
+    state.bsLeft = left;
+    state.bsRight = right;
+    state.bsMid = mid;
+    
+    const steps = [
+      `Iteration ${iteration}:`,
+      `Left = ${left}, Right = ${right}`,
+      `Mid = (${left} + ${right}) / 2 = ${mid}`,
+      `Comparing arr[${mid}] = ${arr[mid]} with target ${target}`,
+      arr[mid] === target ? '✓ Found the target!' :
+        arr[mid] < target ? `${arr[mid]} < ${target}, search RIGHT half` :
+        `${arr[mid]} > ${target}, search LEFT half`
+    ];
+    updateNarration(steps);
+    
+    renderBinarySearch();
+    await delay(800);
+    
+    if (arr[mid] === target) {
+      found = true;
+      state.bsFoundIndex = mid;
+      state.bsLeft = mid;
+      state.bsRight = mid;
+      renderBinarySearch();
+      break;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
   
-  await delay(CONFIG.ANIMATION_DURATION);
+  if (found) {
+    showToast(`Found ${target} at index ${state.bsFoundIndex}!`, '🎯');
+    addToHistory('SEARCH', `${target} → Found at [${state.bsFoundIndex}]`);
+    updateNarration([
+      '🎯 Search complete!',
+      `Target ${target} FOUND!`,
+      `Located at index [${state.bsFoundIndex}]`,
+      `Value: ${arr[state.bsFoundIndex]}`,
+      '✓ Binary search successful!'
+    ]);
+  } else {
+    state.bsNotFound = true;
+    state.bsSearching = true; // Keep searching state for visual
+    renderBinarySearch();
+    showToast(`${target} not found in the array!`, '❌');
+    addToHistory('SEARCH', `${target} → Not found`);
+    updateNarration([
+      '❌ Search complete!',
+      `${target} is NOT in the array.`,
+      'Left pointer crossed right pointer.',
+      'Binary search exhausted all possibilities.',
+      'The element does not exist in this array.'
+    ]);
+  }
+  
+  input.value = '';
   state.isAnimating = false;
 }
 
-async function memFree() {
-  if (state.isAnimating) return;
+function bsReset() {
+  state.bsArray = [];
+  state.bsSortedArray = [];
+  state.bsIsSorted = false;
+  state.bsSearchTarget = null;
+  state.bsLeft = -1;
+  state.bsRight = -1;
+  state.bsMid = -1;
+  state.bsFoundIndex = -1;
+  state.bsSearching = false;
+  state.bsNotFound = false;
   
-  const selectInput = document.getElementById('mem-select');
-  const blockId = selectInput ? parseInt(selectInput.value) : 0;
-  
-  if (!blockId) {
-    showToast('Select a block to free!', '⚠️');
-    return;
-  }
-  
-  const index = state.memoryBlocks.findIndex(b => b.id === blockId);
-  if (index === -1) return;
-  
-  const block = state.memoryBlocks[index];
-  
-  state.isAnimating = true;
-  updatePseudocode(PSEUDOCODE.memory.free);
-  
-  const steps = [
-    `free(${block.name}) called...`,
-    `Releasing ${block.size} bytes...`,
-    'Memory returned to heap.',
-    `⚠️ "${block.name}" is now invalid!`
-  ];
-  updateNarration(steps);
-  
-  renderMemory(block.id, 'fade-out');
-  await delay(400);
-  
-  state.memoryBlocks.splice(index, 1);
-  
-  renderMemory();
-  updateMemorySelect();
-  addToHistory('FREE', `${block.name} (${block.size}B)`);
-  showToast(`free: Released "${block.name}"`, '🗑️');
-  
-  state.isAnimating = false;
+  renderBinarySearch();
+  updateStatus(0, 10);
+  showToast('Array cleared!', '🗑️');
+  updateNarration([
+    'Array cleared!',
+    '1️⃣ Add numbers to build an array',
+    '2️⃣ Sort the array (for 2+ elements)',
+    '3️⃣ Search for any number'
+  ]);
 }
 
 // ============================================
@@ -1163,40 +1389,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize DOM references
   initDOM();
   
-  // Set up member button click handlers (desktop)
+  // Set up member button click handlers
   if (DOM.memberBtns && DOM.memberBtns.length > 0) {
     DOM.memberBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         switchMember(btn.dataset.member);
       });
     });
-  }
-  
-  // Set up mobile navigation click handlers
-  if (DOM.mobileNavBtns && DOM.mobileNavBtns.length > 0) {
-    DOM.mobileNavBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const member = btn.dataset.member;
-        switchMember(member);
-        
-        // Update mobile nav active state
-        DOM.mobileNavBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // Close sheet if open
-        closeMobileSheet();
-      });
-    });
-  }
-  
-  // Info button for mobile sheet
-  if (DOM.infoBtn) {
-    DOM.infoBtn.addEventListener('click', toggleMobileSheet);
-  }
-  
-  // Close sheet on overlay click
-  if (DOM.mobileOverlay) {
-    DOM.mobileOverlay.addEventListener('click', closeMobileSheet);
   }
   
   // Step navigation (if elements exist)
@@ -1218,9 +1417,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // PWA Install prompt handlers
-  setupPWA();
-  
   // Start with Omkar's Stack & Queue view
   switchMember('omkar');
   
@@ -1229,161 +1425,3 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Team: Nagaraj, Omkar, Prajwal');
   console.log('Guide: Dr. Pooja Aspalli Ma\'am');
 });
-
-// ============================================
-// MOBILE FUNCTIONS
-// ============================================
-
-function toggleMobileSheet() {
-  if (DOM.mobileSheet && DOM.mobileOverlay) {
-    const isOpen = DOM.mobileSheet.classList.contains('open');
-    if (isOpen) {
-      closeMobileSheet();
-    } else {
-      openMobileSheet();
-    }
-  }
-}
-
-function openMobileSheet() {
-  if (DOM.mobileSheet) {
-    DOM.mobileSheet.classList.add('open');
-    updateMobileSheet();
-  }
-  if (DOM.mobileOverlay) {
-    DOM.mobileOverlay.classList.add('open');
-  }
-}
-
-function closeMobileSheet() {
-  if (DOM.mobileSheet) {
-    DOM.mobileSheet.classList.remove('open');
-  }
-  if (DOM.mobileOverlay) {
-    DOM.mobileOverlay.classList.remove('open');
-  }
-}
-
-function updateMobileSheet() {
-  const config = MEMBERS[state.currentMember];
-  
-  // Update title
-  if (DOM.sheetTitle) {
-    DOM.sheetTitle.textContent = config.topic + ' - Behind the Scenes';
-  }
-  
-  // Update algorithm
-  if (DOM.sheetAlgo) {
-    let code = '';
-    switch (state.currentMember) {
-      case 'omkar':
-        code = state.currentSubView === 'stack' 
-          ? PSEUDOCODE.stack.push 
-          : PSEUDOCODE.queue.enqueue;
-        break;
-      case 'prajwal':
-        code = PSEUDOCODE.linkedlist.insert;
-        break;
-      case 'nagaraj':
-        code = PSEUDOCODE.memory.malloc;
-        break;
-    }
-    DOM.sheetAlgo.innerHTML = `<pre>${code}</pre>`;
-  }
-  
-  // Update stats
-  if (DOM.sheetSize) {
-    switch (state.currentMember) {
-      case 'omkar':
-        DOM.sheetSize.textContent = state.currentSubView === 'stack' 
-          ? state.stack.length 
-          : state.queue.length;
-        break;
-      case 'prajwal':
-        DOM.sheetSize.textContent = state.linkedList.length;
-        break;
-      case 'nagaraj':
-        DOM.sheetSize.textContent = getTotalAllocated() + 'B';
-        break;
-    }
-  }
-  
-  if (DOM.sheetTop) {
-    switch (state.currentMember) {
-      case 'omkar':
-        DOM.sheetTop.textContent = state.currentSubView === 'stack' 
-          ? (state.stack.length > 0 ? state.stack.length - 1 : -1)
-          : (state.queue.length > 0 ? 0 : -1);
-        break;
-      case 'prajwal':
-        DOM.sheetTop.textContent = state.linkedList.length > 0 ? 'HEAD' : 'NULL';
-        break;
-      case 'nagaraj':
-        DOM.sheetTop.textContent = state.memoryBlocks.length;
-        break;
-    }
-  }
-}
-
-// ============================================
-// PWA INSTALL FUNCTIONALITY
-// ============================================
-
-let deferredPrompt = null;
-
-function setupPWA() {
-  // Listen for install prompt
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    // Show install prompt after 3 seconds
-    setTimeout(() => {
-      if (DOM.pwaPrompt && deferredPrompt) {
-        DOM.pwaPrompt.classList.add('show');
-      }
-    }, 3000);
-  });
-  
-  // Install button click
-  if (DOM.pwaInstall) {
-    DOM.pwaInstall.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('PWA install outcome:', outcome);
-        deferredPrompt = null;
-        hidePWAPrompt();
-      }
-    });
-  }
-  
-  // Later button click
-  if (DOM.pwaLater) {
-    DOM.pwaLater.addEventListener('click', () => {
-      hidePWAPrompt();
-      // Don't show again for 24 hours
-      localStorage.setItem('pwa-prompt-dismissed', Date.now());
-    });
-  }
-  
-  // Check if already dismissed recently
-  const dismissed = localStorage.getItem('pwa-prompt-dismissed');
-  if (dismissed && Date.now() - parseInt(dismissed) < 86400000) {
-    // Less than 24 hours, don't show
-    deferredPrompt = null;
-  }
-  
-  // Listen for successful install
-  window.addEventListener('appinstalled', () => {
-    console.log('PWA installed successfully');
-    hidePWAPrompt();
-    deferredPrompt = null;
-  });
-}
-
-function hidePWAPrompt() {
-  if (DOM.pwaPrompt) {
-    DOM.pwaPrompt.classList.remove('show');
-  }
-}

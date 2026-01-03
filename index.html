@@ -58,19 +58,19 @@
         </div>
         
         <div class="members-list" id="members-list">
-          <button class="member-btn" data-member="nagaraj">
-            <div class="member-info">
-              <span class="member-name">Nagaraj</span>
-              <span class="member-usn">3PD24CS121</span>
-            </div>
-            <span class="member-topic">Memory Management</span>
-          </button>
-          <button class="member-btn active" data-member="omkar">
+          <button class="member-btn" data-member="omkar">
             <div class="member-info">
               <span class="member-name">Omkar</span>
               <span class="member-usn">3PD24CS131</span>
             </div>
             <span class="member-topic">Stack & Queue</span>
+          </button>
+          <button class="member-btn active" data-member="nagaraj">
+            <div class="member-info">
+              <span class="member-name">Nagaraj</span>
+              <span class="member-usn">3PD24CS121</span>
+            </div>
+            <span class="member-topic">Binary Search</span>
           </button>
           <button class="member-btn" data-member="prajwal">
             <div class="member-info">
@@ -122,18 +122,45 @@
             </div>
           </div>
 
-          <!-- Status chalk marks -->
-          <div class="status-chalk">
-            <span class="status-item">
-              <span class="status-label">Size:</span>
-              <span class="status-value" id="status-size">0</span>
-            </span>
-            <span class="status-divider">|</span>
-            <span class="status-item">
-              <span class="status-label">Capacity:</span>
-              <span class="status-value" id="status-capacity">8</span>
-            </span>
+          <!-- Floating Status Panel -->
+          <div class="floating-status">
+            <div class="floating-status-header">
+              <span class="status-icon">📊</span>
+              <h3>Live Status</h3>
+            </div>
+            <div class="status-content">
+              <div class="status-row">
+                <span class="status-emoji">📍</span>
+                <div class="status-info">
+                  <span class="status-label">Top Index</span>
+                  <span class="status-value" id="status-top">-1</span>
+                </div>
+              </div>
+              <div class="status-row">
+                <span class="status-emoji">📦</span>
+                <div class="status-info">
+                  <span class="status-label">Elements</span>
+                  <span class="status-value" id="status-size">0</span>
+                </div>
+              </div>
+              <div class="status-row">
+                <span class="status-emoji">⏱️</span>
+                <div class="status-info">
+                  <span class="status-label">Time</span>
+                  <span class="status-value" id="status-time">O(1)</span>
+                </div>
+              </div>
+              <div class="status-row">
+                <span class="status-emoji">💾</span>
+                <div class="status-info">
+                  <span class="status-label">Space</span>
+                  <span class="status-value" id="status-space">O(n)</span>
+                </div>
+              </div>
+            </div>
           </div>
+          <!-- Hidden elements for JS compatibility -->
+          <span id="status-capacity" style="display:none;">8</span>
         </div>
       </div>
 
@@ -162,43 +189,16 @@
         <!-- Algorithm Section -->
         <div class="algo-section">
           <div class="algo-header">
-            <span class="algo-tag">ALGORITHM</span>
+            <span class="algo-tag">C CODE</span>
           </div>
-          <pre class="algo-code" id="pseudocode"><code>function push(element):
-    if top >= MAX_SIZE - 1:
-        return "OVERFLOW"
-    top = top + 1
-    stack[top] = element</code></pre>
-        </div>
-
-        <!-- Live Stats -->
-        <div class="stats-section">
-          <div class="stats-header">
-            <span class="stats-tag">LIVE STATUS</span>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-icon">📍</span>
-              <div class="stat-info">
-                <span class="stat-label">Top Index</span>
-                <span class="stat-value" id="mem-top">-1</span>
-              </div>
-            </div>
-            <div class="stat-item">
-              <span class="stat-icon">📦</span>
-              <div class="stat-info">
-                <span class="stat-label">Elements</span>
-                <span class="stat-value" id="mem-size">0</span>
-              </div>
-            </div>
-            <div class="stat-item">
-              <span class="stat-icon">⚡</span>
-              <div class="stat-info">
-                <span class="stat-label">Complexity</span>
-                <span class="stat-value">O(1)</span>
-              </div>
-            </div>
-          </div>
+          <pre class="algo-code" id="pseudocode"><code>void push(int element) {
+    if (top >= MAX_SIZE - 1) {
+        printf("OVERFLOW\n");
+        return;
+    }
+    top++;
+    stack[top] = element;
+}</code></pre>
         </div>
 
         <!-- Key Concepts -->
