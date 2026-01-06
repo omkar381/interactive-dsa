@@ -27,16 +27,16 @@ const CONFIG = {
 const MEMBERS = {
   nagaraj: {
     name: 'Nagaraj',
-    topic: 'Memory Management',
-    badge: 'HEAP',
+    topic: 'Binary Search',
+    badge: 'O(log n)',
     definition: {
-      title: 'What is Memory Management?',
-      text: 'Memory Management is how programs request, use, and release memory during runtime. In C, we use <strong>malloc</strong>, <strong>calloc</strong>, <strong>realloc</strong>, and <strong>free</strong> to manage heap memory.',
+      title: 'What is Binary Search?',
+      text: 'Binary Search is an efficient algorithm to find an element in a <strong>sorted array</strong>. It repeatedly divides the search space in half, comparing the target with the middle element.',
       points: [
-        '→ malloc: allocate uninitialized memory',
-        '→ calloc: allocate + initialize to zero',
-        '→ realloc: resize existing allocation',
-        '→ free: release memory back to heap'
+        '→ Time Complexity: O(log n)',
+        '→ Requires a SORTED array',
+        '→ Divide and Conquer approach',
+        '→ Much faster than Linear Search'
       ]
     }
   },
@@ -69,69 +69,146 @@ const MEMBERS = {
         '→ Last node points to NULL'
       ]
     }
+  },
+  hanoi: {
+    name: 'Tower of Hanoi',
+    topic: 'Tower of Hanoi',
+    badge: 'RECURSION',
+    definition: {
+      title: 'What is Tower of Hanoi?',
+      text: '<strong>Tower of Hanoi</strong> is a classic puzzle that demonstrates <strong>recursion</strong>. Move all disks from source peg to destination peg, one at a time, never placing a larger disk on a smaller one.',
+      points: [
+        '→ Classic recursive problem',
+        '→ Minimum moves: 2ⁿ - 1',
+        '→ Uses divide and conquer',
+        '→ Demonstrates stack behavior'
+      ]
+    }
   }
 };
 
-// Pseudocode templates
+// C Code templates
 const PSEUDOCODE = {
   stack: {
-    push: `function push(element):
-    if top >= MAX_SIZE - 1:
-        return "OVERFLOW"
-    top = top + 1
-    stack[top] = element`,
-    pop: `function pop():
-    if top < 0:
-        return "UNDERFLOW"
-    element = stack[top]
-    top = top - 1
-    return element`
+    push: `void push(int element) {
+    if (top >= MAX_SIZE - 1) {
+        printf("OVERFLOW\\n");
+        return;
+    }
+    top++;
+    stack[top] = element;
+}`,
+    pop: `int pop() {
+    if (top < 0) {
+        printf("UNDERFLOW\\n");
+        return -1;
+    }
+    int element = stack[top];
+    top--;
+    return element;
+}`
   },
   queue: {
-    enqueue: `function enqueue(element):
-    if rear >= MAX_SIZE - 1:
-        return "OVERFLOW"
-    rear = rear + 1
-    queue[rear] = element`,
-    dequeue: `function dequeue():
-    if front > rear:
-        return "UNDERFLOW"
-    element = queue[front]
-    front = front + 1
-    return element`
+    enqueue: `void enqueue(int element) {
+    if (rear >= MAX_SIZE - 1) {
+        printf("OVERFLOW\\n");
+        return;
+    }
+    rear++;
+    queue[rear] = element;
+}`,
+    dequeue: `int dequeue() {
+    if (front > rear) {
+        printf("UNDERFLOW\\n");
+        return -1;
+    }
+    int element = queue[front];
+    front++;
+    return element;
+}`
   },
   linkedlist: {
-    insert: `function insertAtHead(value):
-    newNode = new Node(value)
-    newNode.next = head
-    head = newNode`,
-    delete: `function deleteNode(value):
-    if head.data == value:
-        head = head.next
-        return
-    curr = head
-    while curr.next != null:
-        if curr.next.data == value:
-            curr.next = curr.next.next
-            return
-        curr = curr.next`
+    insert: `void insertAtHead(int value) {
+    Node* newNode = malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = head;
+    head = newNode;
+}`,
+    delete: `void deleteNode(int value) {
+    if (head->data == value) {
+        head = head->next;
+        return;
+    }
+    Node* curr = head;
+    while (curr->next != NULL) {
+        if (curr->next->data == value) {
+            curr->next = curr->next->next;
+            return;
+        }
+        curr = curr->next;
+    }
+}`
   },
-  memory: {
-    malloc: `void* malloc(size_t size):
-    // Allocates 'size' bytes
-    // Memory is UNINITIALIZED
-    ptr = find_free_block(size)
-    return ptr`,
-    calloc: `void* calloc(size_t n, size_t size):
-    // Allocates n * size bytes
-    // Memory is ZERO-INITIALIZED
-    ptr = malloc(n * size)
-    memset(ptr, 0, n * size)
-    return ptr`,
-    free: `void free(void* ptr):
-    // Returns memory to heap
-    mark_as_free(ptr)
-    // ptr is now invalid!`
+  binarySearch: {
+    search: `int binarySearch(int arr[], int n, int target) {
+    int left = 0;
+    int right = n - 1;
+    
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        
+        if (arr[mid] == target)
+            return mid;  // Found!
+        else if (arr[mid] < target)
+            left = mid + 1;  // Search right
+        else
+            right = mid - 1; // Search left
+    }
+    return -1;  // Not found
+}`,
+    sort: `void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}`
+  },
+  hanoi: {
+    recursive: `void towerOfHanoi(int n, char src, char dest, char aux) {
+    if (n == 1) {
+        printf("Move disk 1: %c -> %c\\n", src, dest);
+        return;
+    }
+    // Move n-1 disks from src to aux
+    towerOfHanoi(n-1, src, aux, dest);
+    
+    // Move nth disk from src to dest
+    printf("Move disk %d: %c -> %c\\n", n, src, dest);
+    
+    // Move n-1 disks from aux to dest
+    towerOfHanoi(n-1, aux, dest, src);
+}`,
+    iterative: `void towerOfHanoiIterative(int n) {
+    int totalMoves = (1 << n) - 1; // 2^n - 1
+    char pegs[] = {'A', 'B', 'C'};
+    
+    // For odd n: A->C, A->B, B->C
+    // For even n: A->B, A->C, B->C
+    if (n % 2 == 0) {
+        swap(pegs[1], pegs[2]);
+    }
+    
+    for (int i = 1; i <= totalMoves; i++) {
+        int from = (i & (i-1)) % 3;
+        int to = ((i | (i-1)) + 1) % 3;
+        moveDisk(pegs[from], pegs[to]);
+    }
+}`
   }
 };
 
@@ -148,8 +225,28 @@ const state = {
   stack: [],
   queue: [],
   linkedList: [],
-  memoryBlocks: [],
-  nextMemId: 1,
+  
+  // Binary Search state
+  bsArray: [],
+  bsSortedArray: [],
+  bsIsSorted: false,
+  bsSearchTarget: null,
+  bsLeft: -1,
+  bsRight: -1,
+  bsMid: -1,
+  bsFoundIndex: -1,
+  bsSearching: false,
+  bsNotFound: false,
+  bsSorting: false,
+  bsSortingIndices: [], // indices being compared/swapped
+  
+  // Tower of Hanoi state
+  hanoiDisks: 3,
+  hanoiTowers: [[], [], []], // Three pegs: A, B, C
+  hanoiMoves: [],
+  hanoiCurrentMove: 0,
+  hanoiAutoPlaying: false,
+  hanoiMoveCount: 0,
   
   // Steps
   currentSteps: [],
@@ -187,6 +284,9 @@ function initDOM() {
     // Status
     statusSize: document.getElementById('status-size'),
     statusCapacity: document.getElementById('status-capacity'),
+    statusTop: document.getElementById('status-top'),
+    statusTime: document.getElementById('status-time'),
+    statusSpace: document.getElementById('status-space'),
     toastText: document.getElementById('toast-text'),
     
     // Memory display
@@ -232,9 +332,8 @@ function addToHistory(operation, value) {
 function updateStatus(size, capacity) {
   if (DOM.statusSize) DOM.statusSize.textContent = size;
   if (DOM.statusCapacity) DOM.statusCapacity.textContent = capacity;
-  // Update memory display
-  if (DOM.memSize) DOM.memSize.textContent = size;
-  if (DOM.memTop) DOM.memTop.textContent = size > 0 ? size - 1 : -1;
+  // Update top index display
+  if (DOM.statusTop) DOM.statusTop.textContent = size > 0 ? size - 1 : -1;
 }
 
 function updateNarration(steps, activeIndex = 0) {
@@ -307,7 +406,7 @@ function switchMember(member) {
     setTimeout(() => {
       switch (member) {
         case 'nagaraj':
-          initMemoryView();
+          initBinarySearchView();
           break;
         case 'omkar':
           state.currentSubView = 'stack';
@@ -315,6 +414,9 @@ function switchMember(member) {
           break;
         case 'prajwal':
           initLinkedListView();
+          break;
+        case 'hanoi':
+          initHanoiView();
           break;
       }
       if (DOM.visualization) {
@@ -343,7 +445,7 @@ function initStackQueueView() {
       <button class="sketch-btn ${state.currentSubView === 'stack' ? 'primary' : ''}" id="show-stack">Stack</button>
       <button class="sketch-btn ${state.currentSubView === 'queue' ? 'primary' : ''}" id="show-queue">Queue</button>
     </div>
-    <input type="text" class="sketch-input" id="value-input" placeholder="Enter value..." maxlength="4">
+    <input type="text" class="sketch-input" id="value-input" placeholder="Enter value..." maxlength="4" autocomplete="off">
     <div class="btn-row">
       <button class="sketch-btn success" id="add-btn">${state.currentSubView === 'stack' ? 'Push' : 'Enqueue'}</button>
       <button class="sketch-btn danger" id="remove-btn">${state.currentSubView === 'stack' ? 'Pop' : 'Dequeue'}</button>
@@ -508,13 +610,13 @@ async function stackPop() {
   ];
   updateNarration(steps);
   
-  // First highlight the element
+  // First highlight the element with pulsing glow
   renderStack(state.stack.length - 1, 'highlight-pop');
-  await delay(200);
-  
-  // Then animate it flying out
-  renderStack(state.stack.length - 1, 'pop-out-up');
   await delay(500);
+  
+  // Then animate it flying out with spiral effect
+  renderStack(state.stack.length - 1, 'pop-out-up');
+  await delay(600);
   
   state.stack.pop();
   renderStack();
@@ -628,19 +730,19 @@ async function queueDequeue() {
   ];
   updateNarration(steps);
   
-  // First highlight the element
+  // First highlight the element with glowing effect
   renderQueue(0, 'highlight-dequeue');
-  await delay(200);
-  
-  // Then animate it sliding out to the left
-  renderQueue(0, 'dequeue-out-left');
   await delay(500);
+  
+  // Then animate it swooshing out to the left
+  renderQueue(0, 'dequeue-out-left');
+  await delay(600);
   
   state.queue.shift();
   
-  // Animate remaining elements sliding left
+  // Animate remaining elements sliding left with bounce
   renderQueue(-1, 'slide-left-queue');
-  await delay(300);
+  await delay(400);
   
   renderQueue();
   updateStatus(state.queue.length, CONFIG.QUEUE_MAX_SIZE);
@@ -671,12 +773,12 @@ function initLinkedListView() {
   if (!DOM.controlContent) return;
   
   DOM.controlContent.innerHTML = `
-    <input type="text" class="sketch-input" id="ll-input" placeholder="Enter value..." maxlength="4">
+    <input type="text" class="sketch-input" id="ll-input" placeholder="Enter value..." maxlength="4" autocomplete="off">
     <div class="btn-row">
       <button class="sketch-btn success" id="ll-insert-head">Insert Head</button>
       <button class="sketch-btn primary" id="ll-insert-tail">Insert Tail</button>
     </div>
-    <input type="text" class="sketch-input" id="ll-delete-input" placeholder="Value to delete..." maxlength="4" style="margin-top: 8px;">
+    <input type="text" class="sketch-input" id="ll-delete-input" placeholder="Value to delete..." maxlength="4" style="margin-top: 8px;" autocomplete="off">
     <button class="sketch-btn danger" id="ll-delete">Delete Node</button>
     <button class="sketch-btn" id="ll-reset" style="margin-top: 8px;">🗑 Clear All</button>
   `;
@@ -711,14 +813,22 @@ function renderLinkedList(highlightIndex = -1, animClass = '') {
     return;
   }
   
+  // Check if we're applying animation to all nodes (for reconnect effect)
+  const applyToAll = highlightIndex === -1 && animClass !== '';
+  
   let nodes = '<span class="head-label">HEAD</span>';
   state.linkedList.forEach((val, i) => {
+    const nodeAnimClass = (i === highlightIndex || applyToAll) ? animClass : '';
+    const arrowAnimClass = (i === highlightIndex && animClass === 'delete-node-explode') ? 'link-break' : 
+                          (applyToAll ? animClass : '');
     nodes += `
-      <div class="node-box ${i === highlightIndex ? animClass : ''}">
+      <div class="node-box ${nodeAnimClass}">
         <div class="node-data">${val}</div>
         <div class="node-next">next</div>
       </div>
-      ${i < state.linkedList.length - 1 ? '<span class="node-arrow">→</span>' : '<span class="node-arrow">→</span><span class="node-null">NULL</span>'}
+      ${i < state.linkedList.length - 1 ? 
+        `<span class="node-arrow ${arrowAnimClass}">→</span>` : 
+        `<span class="node-arrow ${arrowAnimClass}">→</span><span class="node-null">NULL</span>`}
     `;
   });
   
@@ -834,21 +944,31 @@ async function llDelete() {
   const steps = [
     `Searching for "${value}"...`,
     `Found at position ${index + 1}`,
-    'Updating previous node\'s next pointer...',
+    'Breaking link connections...',
+    'Reconnecting neighboring nodes...',
     '✓ Node deleted!'
   ];
   updateNarration(steps);
   
-  renderLinkedList(index, 'fade-out');
-  await delay(300);
+  // First highlight the node to delete
+  renderLinkedList(index, 'highlight-delete');
+  await delay(500);
+  
+  // Animate the node exploding/disappearing
+  renderLinkedList(index, 'delete-node-explode');
+  await delay(700);
   
   state.linkedList.splice(index, 1);
   input.value = '';
   
+  // Animate remaining nodes reconnecting
+  renderLinkedList(-1, 'reconnect-nodes');
+  await delay(400);
+  
   renderLinkedList();
   updateStatus(state.linkedList.length, CONFIG.LINKEDLIST_MAX_SIZE);
   addToHistory('DELETE', value);
-  showToast(`Deleted "${value}"`, '🗑️');
+  showToast(`Deleted "${value}"`, '💥');
   
   state.isAnimating = false;
 }
@@ -861,298 +981,772 @@ function llReset() {
 }
 
 // ============================================
-// NAGARAJ: MEMORY MANAGEMENT
+// NAGARAJ: BINARY SEARCH
 // ============================================
 
-function initMemoryView() {
+function initBinarySearchView() {
   if (!DOM.controlContent) return;
   
+  // Reset binary search state
+  state.bsSearching = false;
+  state.bsLeft = -1;
+  state.bsRight = -1;
+  state.bsMid = -1;
+  state.bsFoundIndex = -1;
+  state.bsNotFound = false;
+  
   DOM.controlContent.innerHTML = `
-    <input type="text" class="sketch-input" id="mem-name" placeholder="Variable name (e.g., ptr)" maxlength="6">
-    <input type="number" class="sketch-input" id="mem-size" placeholder="Size in bytes" min="1" max="128">
-    <div class="btn-row">
-      <button class="sketch-btn" id="mem-malloc" style="background: var(--pastel-yellow);">malloc</button>
-      <button class="sketch-btn" id="mem-calloc" style="background: var(--pastel-green);">calloc</button>
+    <input type="text" class="sketch-input" id="bs-input" placeholder="Enter number..." maxlength="4" autocomplete="off">
+    <button class="sketch-btn success" id="bs-add">Add Element</button>
+    <button class="sketch-btn primary" id="bs-sort" style="margin-top: 6px;">Sort Array</button>
+    <div style="margin-top: 10px; border-top: 1px dashed var(--chalk-light); padding-top: 10px;">
+      <input type="text" class="sketch-input" id="bs-search-input" placeholder="Search for..." maxlength="4" autocomplete="off">
+      <button class="sketch-btn" id="bs-search" style="background: var(--pastel-purple); margin-top: 6px;">🔍 Search</button>
     </div>
-    <div class="btn-row">
-      <button class="sketch-btn" id="mem-realloc" style="background: var(--pastel-purple);">realloc</button>
-      <button class="sketch-btn danger" id="mem-free">free</button>
-    </div>
-    <select class="sketch-input" id="mem-select" style="margin-top: 8px;">
-      <option value="">-- Select block --</option>
-    </select>
+    <button class="sketch-btn danger" id="bs-reset" style="margin-top: 10px;">Clear All</button>
   `;
   
-  const mallocBtn = document.getElementById('mem-malloc');
-  const callocBtn = document.getElementById('mem-calloc');
-  const reallocBtn = document.getElementById('mem-realloc');
-  const freeBtn = document.getElementById('mem-free');
+  const addBtn = document.getElementById('bs-add');
+  const sortBtn = document.getElementById('bs-sort');
+  const searchBtn = document.getElementById('bs-search');
+  const resetBtn = document.getElementById('bs-reset');
+  const input = document.getElementById('bs-input');
+  const searchInput = document.getElementById('bs-search-input');
   
-  if (mallocBtn) mallocBtn.addEventListener('click', memMalloc);
-  if (callocBtn) callocBtn.addEventListener('click', memCalloc);
-  if (reallocBtn) reallocBtn.addEventListener('click', memRealloc);
-  if (freeBtn) freeBtn.addEventListener('click', memFree);
+  if (addBtn) addBtn.addEventListener('click', bsAddElement);
+  if (sortBtn) sortBtn.addEventListener('click', bsSortArray);
+  if (searchBtn) searchBtn.addEventListener('click', bsStartSearch);
+  if (resetBtn) resetBtn.addEventListener('click', bsReset);
+  if (input) {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') bsAddElement();
+    });
+  }
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') bsStartSearch();
+    });
+  }
   
-  renderMemory();
-  updateMemorySelect();
-  updatePseudocode(PSEUDOCODE.memory.malloc);
-  updateStatus(getTotalAllocated(), CONFIG.HEAP_SIZE);
+  renderBinarySearch();
+  updatePseudocode(PSEUDOCODE.binarySearch.search);
+  updateStatus(state.bsArray.length, 10);
+  
+  // Initial narration based on current state
+  if (state.bsArray.length === 0) {
+    updateNarration([
+      'Welcome to Binary Search!',
+      '1️⃣ Add numbers to build an array',
+      '2️⃣ Sort the array (for 2+ elements)',
+      '3️⃣ Search for any number',
+      'Let\'s begin! Enter a number above.'
+    ]);
+  }
 }
 
-function getTotalAllocated() {
-  return state.memoryBlocks.reduce((sum, b) => sum + b.size, 0);
-}
-
-function generateAddr() {
-  return '0x' + (Math.floor(Math.random() * 0xFFFF) + 0x1000).toString(16).toUpperCase();
-}
-
-function updateMemorySelect() {
-  const select = document.getElementById('mem-select');
-  if (!select) return;
-  select.innerHTML = '<option value="">-- Select block --</option>' +
-    state.memoryBlocks.map(b => `<option value="${b.id}">${b.name} (${b.size}B)</option>`).join('');
-}
-
-function renderMemory(highlightId = -1, animClass = '') {
+function renderBinarySearch() {
   if (!DOM.visualization) return;
   
-  const total = getTotalAllocated();
-  const free = CONFIG.HEAP_SIZE - total;
+  // For single element or sorted array, use appropriate display
+  // During sorting, use bsSortedArray which holds the current state
+  let arr;
+  if (state.bsSorting && state.bsSortedArray.length > 0) {
+    arr = state.bsSortedArray;
+  } else if (state.bsArray.length === 1) {
+    arr = state.bsArray;
+  } else if (state.bsIsSorted && state.bsSortedArray.length > 0) {
+    arr = state.bsSortedArray;
+  } else {
+    arr = state.bsArray;
+  }
   
-  let blocks = '';
-  state.memoryBlocks.forEach(b => {
-    const width = Math.max((b.size / CONFIG.HEAP_SIZE) * 100, 10);
-    blocks += `
-      <div class="mem-block ${b.type === 'malloc' ? 'allocated-malloc' : 'allocated-calloc'} ${b.id === highlightId ? animClass : ''}" 
-           style="width: ${width}%;">
-        <span class="block-name">${b.name}</span>
-        <span class="block-addr">${b.addr}</span>
-        <span class="block-size">${b.size}B</span>
+  if (arr.length === 0) {
+    DOM.visualization.innerHTML = `
+      <div class="bs-sketch">
+        <div class="bs-empty">
+          Array is empty<br>
+          Add some numbers to begin!
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  let elements = '';
+  arr.forEach((val, i) => {
+    let stateClass = '';
+    let indexLabel = '';
+    
+    // Determine the state of this element during sorting
+    if (state.bsSorting) {
+      if (state.bsSortingIndices.includes(i)) {
+        stateClass = 'bs-sorting-active';
+      } else {
+        stateClass = 'bs-sorting';
+      }
+    }
+    // Determine the state of this element during search
+    else if (state.bsNotFound) {
+      // All elements dimmed when not found
+      stateClass = 'bs-not-found';
+    } else if (state.bsSearching) {
+      if (state.bsFoundIndex === i) {
+        stateClass = 'bs-found';
+      } else if (i === state.bsMid) {
+        stateClass = 'bs-mid';
+      } else if (i >= state.bsLeft && i <= state.bsRight) {
+        stateClass = 'bs-active';
+      } else {
+        stateClass = 'bs-dimmed';
+      }
+    }
+    
+    // Show pointer labels
+    if (state.bsSearching && state.bsFoundIndex === -1 && !state.bsNotFound) {
+      if (i === state.bsLeft) indexLabel = '<span class="bs-pointer bs-left-ptr">L</span>';
+      if (i === state.bsRight) indexLabel = '<span class="bs-pointer bs-right-ptr">R</span>';
+      if (i === state.bsMid) indexLabel = '<span class="bs-pointer bs-mid-ptr">M</span>';
+    }
+    
+    elements += `
+      <div class="bs-element-wrapper">
+        ${indexLabel}
+        <div class="bs-element ${stateClass}" data-index="${i}">
+          ${val}
+        </div>
+        <span class="bs-index">[${i}]</span>
       </div>
     `;
   });
   
-  if (free > 0) {
-    blocks += `
-      <div class="mem-block free-space" style="width: ${(free / CONFIG.HEAP_SIZE) * 100}%;">
-        <span>FREE</span>
-      </div>
-    `;
+  // Determine status text based on array state
+  let statusText;
+  let statusClass;
+  let showSortHint = false;
+  
+  if (arr.length === 1) {
+    // Single element is always sorted
+    statusText = '✓ Ready for Search (1 element)';
+    statusClass = 'sorted';
+  } else if (state.bsIsSorted) {
+    statusText = '✓ Sorted Array — Ready for Search!';
+    statusClass = 'sorted';
+  } else {
+    statusText = '⚠️ Unsorted — Click "Sort Array" first!';
+    statusClass = 'unsorted';
+    showSortHint = arr.length > 1; // Only show hint with 2+ elements
+  }
+  
+  // Build the result message
+  let resultMessage = '';
+  if (state.bsSearchTarget !== null) {
+    if (state.bsFoundIndex !== -1) {
+      resultMessage = `
+        <div class="bs-result-box bs-result-found">
+          <span class="bs-result-icon">🎯</span>
+          <div class="bs-result-content">
+            <span class="bs-result-label">Target: <strong>${state.bsSearchTarget}</strong></span>
+            <span class="bs-result-text bs-found-text">✓ Found at index [${state.bsFoundIndex}]!</span>
+          </div>
+        </div>
+      `;
+    } else if (state.bsNotFound) {
+      resultMessage = `
+        <div class="bs-result-box bs-result-not-found">
+          <span class="bs-result-icon">❌</span>
+          <div class="bs-result-content">
+            <span class="bs-result-label">Target: <strong>${state.bsSearchTarget}</strong></span>
+            <span class="bs-result-text bs-not-found-text">Element NOT found in array!</span>
+          </div>
+        </div>
+      `;
+    } else {
+      resultMessage = `
+        <div class="bs-target-info">
+          Searching for: <strong>${state.bsSearchTarget}</strong>
+        </div>
+      `;
+    }
   }
   
   DOM.visualization.innerHTML = `
-    <div class="memory-sketch">
-      <div class="heap-drawing">
-        <div class="heap-title">🧠 Heap Memory (${CONFIG.HEAP_SIZE} bytes)</div>
-        <div class="heap-bar">
-          ${blocks || '<div class="mem-block free-space" style="width: 100%;"><span>ALL FREE</span></div>'}
+    <div class="bs-sketch">
+      <div class="bs-title">🔍 Binary Search Visualization</div>
+      <div class="bs-status ${statusClass}">${statusText}</div>
+      ${showSortHint ? '<div class="bs-sort-hint">👆 Sort the array before searching!</div>' : ''}
+      <div class="bs-array-container">
+        <div class="bs-array ${state.bsNotFound ? 'bs-array-not-found' : ''}">
+          ${elements}
         </div>
       </div>
-      <div class="mem-legend">
-        <div class="legend-item"><span class="legend-color malloc"></span> malloc (uninitialized)</div>
-        <div class="legend-item"><span class="legend-color calloc"></span> calloc (zeroed)</div>
-        <div class="legend-item"><span class="legend-color free"></span> Free space</div>
+      ${resultMessage}
+      <div class="bs-legend">
+        <div class="legend-item"><span class="legend-color bs-active-legend"></span> Search Space</div>
+        <div class="legend-item"><span class="legend-color bs-mid-legend"></span> Middle Element</div>
+        <div class="legend-item"><span class="legend-color bs-dimmed-legend"></span> Eliminated</div>
+        <div class="legend-item"><span class="legend-color bs-found-legend"></span> Found!</div>
       </div>
     </div>
   `;
   
-  updateStatus(total, CONFIG.HEAP_SIZE);
+  updateStatus(arr.length, 10);
 }
 
-async function memMalloc() {
+async function bsAddElement() {
   if (state.isAnimating) return;
+  const input = document.getElementById('bs-input');
+  if (!input) return;
   
-  const nameInput = document.getElementById('mem-name');
-  const sizeInput = document.getElementById('mem-size');
+  const value = parseInt(input.value.trim());
   
-  const name = nameInput ? nameInput.value.trim() || `p${state.nextMemId}` : `p${state.nextMemId}`;
-  const size = sizeInput ? parseInt(sizeInput.value) || 0 : 0;
-  
-  if (size <= 0 || size > 128) {
-    showToast('Enter size (1-128 bytes)', '⚠️');
+  if (isNaN(value)) {
+    showToast('Please enter a valid number!', '⚠️');
     return;
   }
   
-  if (getTotalAllocated() + size > CONFIG.HEAP_SIZE) {
-    showToast('Not enough memory!', '❌');
+  if (state.bsArray.length >= 10) {
+    showToast('Array is full! Max 10 elements.', '❌');
     return;
   }
   
   state.isAnimating = true;
-  updatePseudocode(PSEUDOCODE.memory.malloc);
   
-  const steps = [
-    `malloc(${size}) called...`,
-    'Searching for free block...',
-    'Found space! Allocating...',
-    `⚠️ Memory is UNINITIALIZED!`,
-    `✓ Assigned to "${name}"`
-  ];
+  // Reset sorted state when adding new element
+  state.bsIsSorted = false;
+  state.bsSearching = false;
+  state.bsSearchTarget = null;
+  state.bsFoundIndex = -1;
+  state.bsNotFound = false;
+  
+  state.bsArray.push(value);
+  state.bsSortedArray = [...state.bsArray];
+  input.value = '';
+  
+  // Different narration based on array size
+  let steps;
+  if (state.bsArray.length === 1) {
+    steps = [
+      `Adding ${value} to the array...`,
+      'First element added!',
+      'Add more elements or search directly.'
+    ];
+  } else if (state.bsArray.length < 3) {
+    steps = [
+      `Adding ${value} to the array...`,
+      `Array now has ${state.bsArray.length} elements.`,
+      'Add more elements or click Sort to prepare for search.'
+    ];
+  } else {
+    steps = [
+      `Adding ${value} to the array...`,
+      `Array now has ${state.bsArray.length} elements.`,
+      '👉 Click "Sort Array" when ready to search!'
+    ];
+  }
   updateNarration(steps);
   
-  const block = {
-    id: state.nextMemId++,
-    name, size,
-    addr: generateAddr(),
-    type: 'malloc'
-  };
-  
-  state.memoryBlocks.push(block);
-  if (nameInput) nameInput.value = '';
-  if (sizeInput) sizeInput.value = '';
-  
-  renderMemory(block.id, 'pop-in');
-  updateMemorySelect();
-  addToHistory('MALLOC', `${name} (${size}B)`);
-  showToast(`malloc: ${size} bytes for "${name}"`, '📦');
+  renderBinarySearch();
+  addToHistory('ADD', value);
+  showToast(`Added ${value} to array`, '➕');
   
   await delay(CONFIG.ANIMATION_DURATION);
   state.isAnimating = false;
 }
 
-async function memCalloc() {
+async function bsSortArray() {
   if (state.isAnimating) return;
-  
-  const nameInput = document.getElementById('mem-name');
-  const sizeInput = document.getElementById('mem-size');
-  
-  const name = nameInput ? nameInput.value.trim() || `arr${state.nextMemId}` : `arr${state.nextMemId}`;
-  const size = sizeInput ? parseInt(sizeInput.value) || 0 : 0;
-  
-  if (size <= 0 || size > 128) {
-    showToast('Enter size (1-128 bytes)', '⚠️');
+  if (state.bsArray.length === 0) {
+    showToast('Array is empty!', '⚠️');
     return;
   }
   
-  if (getTotalAllocated() + size > CONFIG.HEAP_SIZE) {
-    showToast('Not enough memory!', '❌');
+  if (state.bsIsSorted) {
+    showToast('Array is already sorted!', '✓');
     return;
   }
   
   state.isAnimating = true;
-  updatePseudocode(PSEUDOCODE.memory.calloc);
+  state.bsSorting = true;
+  updatePseudocode(PSEUDOCODE.binarySearch.sort);
   
   const steps = [
-    `calloc(1, ${size}) called...`,
-    'Searching for free block...',
-    'Found space! Allocating...',
-    'Initializing all bytes to ZERO...',
-    `✓ Assigned to "${name}"`
+    'Starting to sort the array...',
+    'Using Bubble Sort algorithm...',
+    'Comparing adjacent elements...',
+    'Swapping if needed...',
+    '✓ Array is now sorted!'
   ];
   updateNarration(steps);
   
-  const block = {
-    id: state.nextMemId++,
-    name, size,
-    addr: generateAddr(),
-    type: 'calloc'
-  };
+  // Animate the sorting process
+  const arr = [...state.bsArray];
+  const n = arr.length;
   
-  state.memoryBlocks.push(block);
-  if (nameInput) nameInput.value = '';
-  if (sizeInput) sizeInput.value = '';
+  // Bubble sort with animation
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      // Highlight elements being compared
+      state.bsSortingIndices = [j, j + 1];
+      state.bsSortedArray = [...arr];
+      renderBinarySearch();
+      await delay(200);
+      
+      if (arr[j] > arr[j + 1]) {
+        // Swap
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        
+        // Update visual after swap
+        state.bsSortedArray = [...arr];
+        renderBinarySearch();
+        await delay(150);
+      }
+    }
+  }
   
-  renderMemory(block.id, 'pop-in');
-  updateMemorySelect();
-  addToHistory('CALLOC', `${name} (${size}B)`);
-  showToast(`calloc: ${size} zero-bytes for "${name}"`, '🧹');
+  state.bsSorting = false;
+  state.bsSortingIndices = [];
+  state.bsSortedArray = arr;
+  state.bsIsSorted = true;
+  state.bsSearching = false;
+  state.bsSearchTarget = null;
+  state.bsNotFound = false;
+  
+  renderBinarySearch();
+  addToHistory('SORT', state.bsSortedArray.join(', '));
+  showToast('Array sorted! Now you can search.', '✓');
   
   await delay(CONFIG.ANIMATION_DURATION);
   state.isAnimating = false;
+  updatePseudocode(PSEUDOCODE.binarySearch.search);
 }
 
-async function memRealloc() {
+async function bsStartSearch() {
   if (state.isAnimating) return;
   
-  const selectInput = document.getElementById('mem-select');
-  const sizeInput = document.getElementById('mem-size');
+  const input = document.getElementById('bs-search-input');
+  if (!input) return;
   
-  const blockId = selectInput ? parseInt(selectInput.value) : 0;
-  const newSize = sizeInput ? parseInt(sizeInput.value) || 0 : 0;
+  const target = parseInt(input.value.trim());
   
-  if (!blockId) {
-    showToast('Select a block first!', '⚠️');
+  if (isNaN(target)) {
+    showToast('Enter a number to search!', '⚠️');
     return;
   }
   
-  if (newSize <= 0 || newSize > 128) {
-    showToast('Enter new size (1-128)', '⚠️');
+  if (state.bsArray.length === 0) {
+    showToast('Array is empty! Add elements first.', '⚠️');
     return;
   }
   
-  const block = state.memoryBlocks.find(b => b.id === blockId);
-  if (!block) return;
+  // Allow search on single element OR sorted array
+  if (state.bsArray.length > 1 && !state.bsIsSorted) {
+    showToast('Please sort the array first!', '⚠️');
+    updateNarration([
+      '⚠️ Cannot search unsorted array!',
+      'Binary search requires a SORTED array.',
+      'Click "Sort Array" button first.',
+      'Then try searching again.'
+    ]);
+    return;
+  }
   
-  const diff = newSize - block.size;
-  if (diff > 0 && getTotalAllocated() + diff > CONFIG.HEAP_SIZE) {
-    showToast('Not enough memory!', '❌');
+  // For single element, use the original array
+  const arr = state.bsArray.length === 1 ? state.bsArray : state.bsSortedArray;
+  
+  state.isAnimating = true;
+  updatePseudocode(PSEUDOCODE.binarySearch.search);
+  
+  state.bsSearchTarget = target;
+  state.bsSearching = true;
+  state.bsFoundIndex = -1;
+  state.bsNotFound = false;
+  
+  // For rendering purposes, make sure sorted array is set for single element
+  if (state.bsArray.length === 1) {
+    state.bsSortedArray = [...state.bsArray];
+  }
+  
+  let left = 0;
+  let right = arr.length - 1;
+  let found = false;
+  let iteration = 0;
+  
+  while (left <= right) {
+    iteration++;
+    const mid = Math.floor((left + right) / 2);
+    
+    state.bsLeft = left;
+    state.bsRight = right;
+    state.bsMid = mid;
+    
+    const steps = [
+      `Iteration ${iteration}:`,
+      `Left = ${left}, Right = ${right}`,
+      `Mid = (${left} + ${right}) / 2 = ${mid}`,
+      `Comparing arr[${mid}] = ${arr[mid]} with target ${target}`,
+      arr[mid] === target ? '✓ Found the target!' :
+        arr[mid] < target ? `${arr[mid]} < ${target}, search RIGHT half` :
+        `${arr[mid]} > ${target}, search LEFT half`
+    ];
+    updateNarration(steps);
+    
+    renderBinarySearch();
+    await delay(800);
+    
+    if (arr[mid] === target) {
+      found = true;
+      state.bsFoundIndex = mid;
+      state.bsLeft = mid;
+      state.bsRight = mid;
+      renderBinarySearch();
+      break;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  
+  if (found) {
+    showToast(`Found ${target} at index ${state.bsFoundIndex}!`, '🎯');
+    addToHistory('SEARCH', `${target} → Found at [${state.bsFoundIndex}]`);
+    updateNarration([
+      '🎯 Search complete!',
+      `Target ${target} FOUND!`,
+      `Located at index [${state.bsFoundIndex}]`,
+      `Value: ${arr[state.bsFoundIndex]}`,
+      '✓ Binary search successful!'
+    ]);
+  } else {
+    state.bsNotFound = true;
+    state.bsSearching = true; // Keep searching state for visual
+    renderBinarySearch();
+    showToast(`${target} not found in the array!`, '❌');
+    addToHistory('SEARCH', `${target} → Not found`);
+    updateNarration([
+      '❌ Search complete!',
+      `${target} is NOT in the array.`,
+      'Left pointer crossed right pointer.',
+      'Binary search exhausted all possibilities.',
+      'The element does not exist in this array.'
+    ]);
+  }
+  
+  input.value = '';
+  state.isAnimating = false;
+}
+
+function bsReset() {
+  state.bsArray = [];
+  state.bsSortedArray = [];
+  state.bsIsSorted = false;
+  state.bsSearchTarget = null;
+  state.bsLeft = -1;
+  state.bsRight = -1;
+  state.bsMid = -1;
+  state.bsFoundIndex = -1;
+  state.bsSearching = false;
+  state.bsNotFound = false;
+  
+  renderBinarySearch();
+  updateStatus(0, 10);
+  showToast('Array cleared!', '🗑️');
+  updateNarration([
+    'Array cleared!',
+    '1️⃣ Add numbers to build an array',
+    '2️⃣ Sort the array (for 2+ elements)',
+    '3️⃣ Search for any number'
+  ]);
+}
+
+// ============================================
+// TOWER OF HANOI
+// ============================================
+
+function initHanoiView() {
+  if (!DOM.controlContent) return;
+  
+  // Reset hanoi state
+  state.hanoiAutoPlaying = false;
+  state.hanoiCurrentMove = 0;
+  state.hanoiMoveCount = 0;
+  
+  DOM.controlContent.innerHTML = `
+    <div class="hanoi-controls">
+      <label style="color: var(--chalk-light); font-family: var(--font-chalk); margin-bottom: 8px; display: block;">
+        Number of Disks: <strong id="disk-count">${state.hanoiDisks}</strong>
+      </label>
+      <input type="range" id="hanoi-disk-slider" min="2" max="6" value="${state.hanoiDisks}" 
+             style="width: 100%; margin-bottom: 12px;">
+      <button class="sketch-btn success" id="hanoi-start">🎮 Start Puzzle</button>
+      <button class="sketch-btn primary" id="hanoi-solve" style="margin-top: 8px;">🤖 Auto Solve</button>
+      <div class="btn-row" style="margin-top: 8px;">
+        <button class="sketch-btn" id="hanoi-step">⏭ Step</button>
+        <button class="sketch-btn danger" id="hanoi-stop">⏹ Stop</button>
+      </div>
+      <button class="sketch-btn" id="hanoi-reset" style="margin-top: 8px;">🔄 Reset</button>
+    </div>
+  `;
+  
+  const diskSlider = document.getElementById('hanoi-disk-slider');
+  const startBtn = document.getElementById('hanoi-start');
+  const solveBtn = document.getElementById('hanoi-solve');
+  const stepBtn = document.getElementById('hanoi-step');
+  const stopBtn = document.getElementById('hanoi-stop');
+  const resetBtn = document.getElementById('hanoi-reset');
+  
+  if (diskSlider) {
+    diskSlider.addEventListener('input', (e) => {
+      state.hanoiDisks = parseInt(e.target.value);
+      document.getElementById('disk-count').textContent = state.hanoiDisks;
+    });
+  }
+  
+  if (startBtn) startBtn.addEventListener('click', hanoiStart);
+  if (solveBtn) solveBtn.addEventListener('click', hanoiAutoSolve);
+  if (stepBtn) stepBtn.addEventListener('click', hanoiStep);
+  if (stopBtn) stopBtn.addEventListener('click', hanoiStop);
+  if (resetBtn) resetBtn.addEventListener('click', hanoiReset);
+  
+  // Initialize towers if empty
+  if (state.hanoiTowers[0].length === 0 && state.hanoiTowers[1].length === 0 && state.hanoiTowers[2].length === 0) {
+    hanoiStart();
+  } else {
+    renderHanoi();
+  }
+  
+  updatePseudocode(PSEUDOCODE.hanoi.recursive);
+  const minMoves = Math.pow(2, state.hanoiDisks) - 1;
+  updateStatus(state.hanoiMoveCount, minMoves);
+  
+  updateNarration([
+    'Welcome to Tower of Hanoi!',
+    '🎯 Goal: Move all disks from Peg A to Peg C',
+    '📏 Rule 1: Move only one disk at a time',
+    '📏 Rule 2: Never place larger disk on smaller',
+    `⚡ Minimum moves for ${state.hanoiDisks} disks: ${minMoves}`
+  ]);
+}
+
+function hanoiStart() {
+  state.hanoiTowers = [[], [], []];
+  state.hanoiMoves = [];
+  state.hanoiCurrentMove = 0;
+  state.hanoiMoveCount = 0;
+  state.hanoiAutoPlaying = false;
+  
+  // Initialize source peg with disks (largest at bottom)
+  for (let i = state.hanoiDisks; i >= 1; i--) {
+    state.hanoiTowers[0].push(i);
+  }
+  
+  renderHanoi();
+  const minMoves = Math.pow(2, state.hanoiDisks) - 1;
+  updateStatus(0, minMoves);
+  showToast(`Puzzle started with ${state.hanoiDisks} disks!`, '🎮');
+  
+  updateNarration([
+    `Puzzle initialized with ${state.hanoiDisks} disks!`,
+    'All disks are on Peg A (source)',
+    'Move them to Peg C (destination)',
+    'Use Peg B as auxiliary/helper',
+    `Minimum moves needed: ${minMoves}`
+  ]);
+}
+
+function renderHanoi(highlightDisk = -1, fromPeg = -1, toPeg = -1) {
+  if (!DOM.visualization) return;
+  
+  const pegNames = ['A', 'B', 'C'];
+  const pegLabels = ['Source', 'Auxiliary', 'Destination'];
+  const maxHeight = 6; // Maximum number of disks that can be displayed
+  
+  let pegsHtml = '';
+  
+  for (let p = 0; p < 3; p++) {
+    const tower = state.hanoiTowers[p];
+    let disksHtml = '';
+    
+    // Render disks from bottom to top
+    for (let d = 0; d < tower.length; d++) {
+      const diskSize = tower[d];
+      const widthPercent = 30 + (diskSize * 12); // Width based on disk size
+      const isHighlighted = diskSize === highlightDisk && (p === fromPeg || p === toPeg);
+      const isMoving = diskSize === highlightDisk && p === toPeg;
+      
+      disksHtml += `
+        <div class="hanoi-disk ${isHighlighted ? 'hanoi-disk-highlight' : ''} ${isMoving ? 'hanoi-disk-moving' : ''}" 
+             style="width: ${widthPercent}%; --disk-color: hsl(${diskSize * 40}, 70%, 60%);"
+             data-size="${diskSize}">
+          ${diskSize}
+        </div>
+      `;
+    }
+    
+    const isPegActive = p === fromPeg || p === toPeg;
+    
+    pegsHtml += `
+      <div class="hanoi-peg-container ${isPegActive ? 'hanoi-peg-active' : ''}">
+        <div class="hanoi-peg-label">${pegNames[p]}</div>
+        <div class="hanoi-peg-sublabel">${pegLabels[p]}</div>
+        <div class="hanoi-peg">
+          <div class="hanoi-rod"></div>
+          <div class="hanoi-disks">
+            ${disksHtml}
+          </div>
+          <div class="hanoi-base"></div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Check if puzzle is solved
+  const isSolved = state.hanoiTowers[2].length === state.hanoiDisks && 
+                   state.hanoiTowers[0].length === 0 && 
+                   state.hanoiTowers[1].length === 0;
+  
+  const minMoves = Math.pow(2, state.hanoiDisks) - 1;
+  
+  DOM.visualization.innerHTML = `
+    <div class="hanoi-sketch">
+      <div class="hanoi-title">🗼 Tower of Hanoi</div>
+      <div class="hanoi-stats">
+        Moves: <strong>${state.hanoiMoveCount}</strong> / ${minMoves} (minimum)
+        ${isSolved ? '<span class="hanoi-solved">🎉 SOLVED!</span>' : ''}
+      </div>
+      <div class="hanoi-towers">
+        ${pegsHtml}
+      </div>
+      ${isSolved ? `
+        <div class="hanoi-victory">
+          🏆 Congratulations! Puzzle solved in ${state.hanoiMoveCount} moves!
+          ${state.hanoiMoveCount === minMoves ? '<br>⭐ Perfect! Minimum moves achieved!' : ''}
+        </div>
+      ` : ''}
+    </div>
+  `;
+  
+  updateStatus(state.hanoiMoveCount, minMoves);
+}
+
+function generateHanoiMoves(n, source, dest, aux) {
+  if (n === 1) {
+    state.hanoiMoves.push({ disk: 1, from: source, to: dest });
+    return;
+  }
+  generateHanoiMoves(n - 1, source, aux, dest);
+  state.hanoiMoves.push({ disk: n, from: source, to: dest });
+  generateHanoiMoves(n - 1, aux, dest, source);
+}
+
+async function hanoiAutoSolve() {
+  if (state.isAnimating || state.hanoiAutoPlaying) return;
+  
+  // Reset and generate moves
+  hanoiStart();
+  state.hanoiMoves = [];
+  generateHanoiMoves(state.hanoiDisks, 0, 2, 1);
+  state.hanoiCurrentMove = 0;
+  state.hanoiAutoPlaying = true;
+  
+  updateNarration([
+    '🤖 Auto-solving Tower of Hanoi...',
+    `Total moves to make: ${state.hanoiMoves.length}`,
+    'Using recursive algorithm',
+    'Watch the disks move!'
+  ]);
+  
+  await executeHanoiMoves();
+}
+
+async function executeHanoiMoves() {
+  while (state.hanoiCurrentMove < state.hanoiMoves.length && state.hanoiAutoPlaying) {
+    await hanoiExecuteMove(state.hanoiMoves[state.hanoiCurrentMove]);
+    state.hanoiCurrentMove++;
+    await delay(400);
+  }
+  
+  if (state.hanoiCurrentMove >= state.hanoiMoves.length) {
+    state.hanoiAutoPlaying = false;
+    showToast('Puzzle solved!', '🎉');
+    updateNarration([
+      '🎉 Tower of Hanoi SOLVED!',
+      `Total moves: ${state.hanoiMoveCount}`,
+      `Minimum possible: ${Math.pow(2, state.hanoiDisks) - 1}`,
+      'The recursive algorithm is elegant!',
+      '✓ All disks now on destination peg!'
+    ]);
+  }
+}
+
+async function hanoiExecuteMove(move) {
+  const { disk, from, to } = move;
+  const pegNames = ['A', 'B', 'C'];
+  
+  // Validate move
+  const fromTower = state.hanoiTowers[from];
+  const toTower = state.hanoiTowers[to];
+  
+  if (fromTower.length === 0) return;
+  if (fromTower[fromTower.length - 1] !== disk) return;
+  if (toTower.length > 0 && toTower[toTower.length - 1] < disk) {
+    showToast('Invalid move! Cannot place larger disk on smaller.', '❌');
+    return;
+  }
+  
+  // Perform move
+  fromTower.pop();
+  toTower.push(disk);
+  state.hanoiMoveCount++;
+  
+  renderHanoi(disk, from, to);
+  
+  updateNarration([
+    `Move ${state.hanoiMoveCount}:`,
+    `Moving disk ${disk} from Peg ${pegNames[from]} to Peg ${pegNames[to]}`,
+    `Peg ${pegNames[from]}: [${state.hanoiTowers[from].join(', ') || 'empty'}]`,
+    `Peg ${pegNames[to]}: [${state.hanoiTowers[to].join(', ')}]`,
+    `Remaining moves: ${state.hanoiMoves.length - state.hanoiCurrentMove - 1}`
+  ]);
+}
+
+async function hanoiStep() {
+  if (state.isAnimating) return;
+  
+  // Generate moves if not already done
+  if (state.hanoiMoves.length === 0) {
+    state.hanoiMoves = [];
+    generateHanoiMoves(state.hanoiDisks, 0, 2, 1);
+    state.hanoiCurrentMove = 0;
+  }
+  
+  if (state.hanoiCurrentMove >= state.hanoiMoves.length) {
+    showToast('Puzzle already solved!', '✓');
     return;
   }
   
   state.isAnimating = true;
-  
-  const oldSize = block.size;
-  block.size = newSize;
-  block.addr = generateAddr();
-  
-  const steps = [
-    `realloc(${block.name}, ${newSize})...`,
-    `Old size: ${oldSize} bytes`,
-    newSize > oldSize ? 'Expanding allocation...' : 'Shrinking allocation...',
-    `✓ New size: ${newSize} bytes`
-  ];
-  updateNarration(steps);
-  
-  if (sizeInput) sizeInput.value = '';
-  
-  renderMemory(block.id, 'pop-in');
-  updateMemorySelect();
-  addToHistory('REALLOC', `${block.name}: ${oldSize}→${newSize}B`);
-  showToast(`realloc: ${block.name} now ${newSize}B`, '🔄');
-  
-  await delay(CONFIG.ANIMATION_DURATION);
+  await hanoiExecuteMove(state.hanoiMoves[state.hanoiCurrentMove]);
+  state.hanoiCurrentMove++;
   state.isAnimating = false;
+  
+  if (state.hanoiCurrentMove >= state.hanoiMoves.length) {
+    showToast('Puzzle solved!', '🎉');
+  }
 }
 
-async function memFree() {
-  if (state.isAnimating) return;
-  
-  const selectInput = document.getElementById('mem-select');
-  const blockId = selectInput ? parseInt(selectInput.value) : 0;
-  
-  if (!blockId) {
-    showToast('Select a block to free!', '⚠️');
-    return;
-  }
-  
-  const index = state.memoryBlocks.findIndex(b => b.id === blockId);
-  if (index === -1) return;
-  
-  const block = state.memoryBlocks[index];
-  
-  state.isAnimating = true;
-  updatePseudocode(PSEUDOCODE.memory.free);
-  
-  const steps = [
-    `free(${block.name}) called...`,
-    `Releasing ${block.size} bytes...`,
-    'Memory returned to heap.',
-    `⚠️ "${block.name}" is now invalid!`
-  ];
-  updateNarration(steps);
-  
-  renderMemory(block.id, 'fade-out');
-  await delay(400);
-  
-  state.memoryBlocks.splice(index, 1);
-  
-  renderMemory();
-  updateMemorySelect();
-  addToHistory('FREE', `${block.name} (${block.size}B)`);
-  showToast(`free: Released "${block.name}"`, '🗑️');
-  
-  state.isAnimating = false;
+function hanoiStop() {
+  state.hanoiAutoPlaying = false;
+  showToast('Auto-solve stopped', '⏹');
+}
+
+function hanoiReset() {
+  state.hanoiAutoPlaying = false;
+  state.hanoiMoves = [];
+  state.hanoiCurrentMove = 0;
+  state.hanoiMoveCount = 0;
+  hanoiStart();
+  showToast('Puzzle reset!', '🔄');
 }
 
 // ============================================
